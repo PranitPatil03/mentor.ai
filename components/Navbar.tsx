@@ -15,12 +15,15 @@ const Navbar = () => {
 
       <div className="flex items-center gap-8">
         <NavItems />
+
+        {/* If signed out display sign-in */}
         <SignedOut>
           <SignInButton>
             <button className="btn-signin">Sign In</button>
           </SignInButton>
         </SignedOut>
 
+        {/* If signed in display userButton */}
         <SignedIn>
           <UserButton />
         </SignedIn>
