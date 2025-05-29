@@ -32,6 +32,8 @@ const SearchInput = () => {
         }
       }
     }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, router, searchParams, pathname]);
 
   return (

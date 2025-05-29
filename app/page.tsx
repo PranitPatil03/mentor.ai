@@ -14,10 +14,10 @@ const Page = async () => {
   const recentSessionsCompanions = await getRecentSessions(10);
 
   return (
-    <main>
+    <div className="px-2 pb-10">
       <h1>Popular Companions</h1>
 
-      <section className="home-section">
+      <section className="flex gap-4 py-5 justify-between items-start w-full max-lg:flex-col max-lg:items-center">
         {companions.map((companion) => (
           <CompanionCard
             key={companion.id}
@@ -27,7 +27,7 @@ const Page = async () => {
         ))}
       </section>
 
-      <section className="home-section">
+      <section className="flex gap-4 justify-between py-5 items-start w-full max-lg:flex-col max-lg:items-center">
         <CompanionsList
           title="Recently completed sessions"
           companions={recentSessionsCompanions}
@@ -35,7 +35,7 @@ const Page = async () => {
         />
         <CTA />
       </section>
-    </main>
+    </div>
   );
 };
 

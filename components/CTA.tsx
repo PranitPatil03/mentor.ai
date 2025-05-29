@@ -14,10 +14,12 @@ const CTA = () => {
         voice conversations that feel natural and fun.
       </p>
       <Image src="images/cta.svg" alt="cta" width={362} height={232} />
-      <button className="btn-primary">
+      <button className="btn-primary hover:bg-yellow-500 transition duration-200 flex items-center gap-2 group">
         <Image src="/icons/plus.svg" alt="plus" width={12} height={12} />
         <Link href="/companions/new">
-          <p>Build New Companion</p>
+          <p className="transition duration-200 group-hover:text-lg">
+            Build New Companion
+          </p>
         </Link>
       </button>
     </section>

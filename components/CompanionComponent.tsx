@@ -102,6 +102,7 @@ const CompanionComponent = ({
   return (
     <section className="flex flex-col h-[100vh]">
       <section className="flex gap-8 max-sm:flex-col">
+        {/* COMPANION DISPLAY */}
         <div className="companion-section">
           <div
             className="companion-avatar"
@@ -143,9 +144,9 @@ const CompanionComponent = ({
           <p className="font-bold text-2xl">{name}</p>
         </div>
 
-        {/* USER_SECTION */}
-        <div className="user-section">
-          <div className="user-avatar">
+        {/* USER_SECTION, MIC BUTTON, START BUTTON */}
+        <div className="flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row">
+          <div className="border-2 border-black flex flex-col gap-4 items-center rounded-lg py-8 max-sm:hidden">
             <Image
               src={userImage}
               alt={userName}
@@ -155,6 +156,8 @@ const CompanionComponent = ({
             />
             <p className="font-bold text-2xl">{userName}</p>
           </div>
+
+          {/* MIC-BUTTON */}
           <button
             className="btn-mic"
             onClick={toggleMicrophone}
@@ -170,6 +173,8 @@ const CompanionComponent = ({
               {isMuted ? "Turn on microphone" : "Turn off microphone"}
             </p>
           </button>
+
+          {/* START SESSION BUTTON */}
           <button
             className={cn(
               "rounded-lg py-2 cursor-pointer transition-colors w-full text-white",
@@ -190,20 +195,26 @@ const CompanionComponent = ({
       </section>
 
       {/* TRANSCRIPT */}
-      <section className="transcript">
-        <div className="transcript-message no-scrollbar">
+      <section className="relative flex flex-col gap-4 w-full items-center pt-10 flex-grow overflow-hidden">
+        <div className="overflow-y-auto w-full flex flex-col gap-4 max-sm:gap-2 pr-2 h-full text-2xl no-scrollbar">
           {messages.map((message, index) => {
             if (message.role === "assistant") {
               return (
-                <p key={index} className="max-sm:text-sm">
-                  {name.split(" ")[0].replace("/[.,]/g, ", "")}:{" "}
+                <p key={index} className="max-sm:text-sm mb-1 text-left">
+                  <span className="font-semibold">
+                    {name.split(" ")[0].replace("/[.,]/g, ", "")}:
+                  </span>{" "}
                   {message.content}
                 </p>
               );
             } else {
               return (
-                <p key={index} className="text-primary max-sm:text-sm">
-                  {userName}: {message.content}
+                <p
+                  key={index}
+                  className="text-primary text-right mb-1 max-sm:text-sm"
+                >
+                  <span className="font-semibold">{userName}:</span>{" "}
+                  {message.content}
                 </p>
               );
             }

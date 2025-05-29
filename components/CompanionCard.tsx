@@ -46,7 +46,7 @@ const CompanionCard = ({
       </div>
 
       <Link href={`/companions/${id}`} className="w-full">
-        <button className="btn-primary w-full justify-center">
+        <button className="btn-primary w-full justify-center hover:bg-neutral-800 hover:scale-104 hover:shadow-md transition duration-200">
           Watch Lesson
         </button>
       </Link>
