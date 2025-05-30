@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import React from "react";
+import BookmarkButton from "./BookmarkButton";
+import { currentUser } from "@clerk/nextjs/server";
 
 interface CompanionTypeProps {
   id: string;
@@ -9,28 +12,24 @@ interface CompanionTypeProps {
   subject: string;
   duration: number;
   color: string;
+  bookmarked: boolean;
 }
 
-const CompanionCard = ({
+const CompanionCard = async ({
   id,
   name,
   topic,
   subject,
   duration,
   color,
+  bookmarked,
 }: CompanionTypeProps) => {
+  const user = await currentUser();
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark">
-          <Image
-            src="/icons/bookmark.svg"
-            alt="bookmark"
-            width={12.5}
-            height={15}
-          />
-        </button>
+        <BookmarkButton id={id} bookmarked={bookmarked} userSignedIn={!!user} />
       </div>
 
       <h2 className="text-2xl font-bold">{name}</h2>
