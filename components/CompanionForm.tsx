@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +23,7 @@ import {
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
 import { createCompanion } from "@/lib/actions/companion.action";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -48,7 +47,8 @@ const formSchema = z.object({
 });
 
 const CompanionForm = () => {
-  // 1. Define your form.
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,72 +61,113 @@ const CompanionForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const companion = await createCompanion(values);
-    if (companion) {
-      redirect(`/companions/${companion.id}`);
-    } else {
-      console.log("Failed to create a companion");
-      redirect("/");
+    try {
+      const companion = await createCompanion(values);
+
+      if (!companion?.id) {
+        form.setError("root", {
+          message: "Failed to create mentor. Please try again.",
+        });
+        return;
+      }
+
+      router.push(`/mentors/${companion.id}`);
+      router.refresh();
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to create mentor. Please try again.";
+
+      form.setError("root", { message });
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* companion name */}
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Companion name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter the companion name"
-                  {...field}
-                  className="input"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-5"
+      >
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>AI mentor name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Ex. Algebra Coach"
+                    {...field}
+                    className="input"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* subject */}
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="input capitalize">
-                    <SelectValue placeholder="Select the subject" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjects.map((subject) => (
-                      <SelectItem
-                        value={subject}
-                        key={subject}
-                        className="capitalize"
-                      >
-                        {subject}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="subject"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Subject</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="input capitalize">
+                      <SelectValue placeholder="Select the subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map((subject) => (
+                        <SelectItem
+                          value={subject}
+                          key={subject}
+                          className="capitalize"
+                        >
+                          {subject}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="voice"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Voice</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="input">
+                      <SelectValue placeholder="Select the voice" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         {/* topic */}
         <FormField
@@ -134,10 +175,10 @@ const CompanionForm = () => {
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>What should the companion help with?</FormLabel>
+              <FormLabel>What should this mentor teach?</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Ex. Probability"
+                  placeholder="Ex. Probability fundamentals and exam prep"
                   {...field}
                   className="input"
                 />
@@ -147,82 +188,66 @@ const CompanionForm = () => {
           )}
         />
 
-        {/* voice */}
-        <FormField
-          control={form.control}
-          name="voice"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Voice</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="input">
-                    <SelectValue placeholder="Select the voice" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="style"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Style</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="input">
+                      <SelectValue placeholder="Select the style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="formal">Formal</SelectItem>
+                      <SelectItem value="casual">Casual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* style */}
-        <FormField
-          control={form.control}
-          name="style"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Style</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="input">
-                    <SelectValue placeholder="Select the style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="formal">Formal</SelectItem>
-                    <SelectItem value="casual">Casual</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="duration"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time in minutes</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="15"
+                    {...field}
+                    className="input"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* duration */}
-        <FormField
-          control={form.control}
-          name="duration"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Estimated session duration in minutes</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="15"
-                  {...field}
-                  className="input"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full cursor-pointer">
-          Build Your Companion
-        </Button>
+          <div className="flex items-end">
+            <Button
+              type="submit"
+              className="w-full cursor-pointer bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] transition-all duration-200"
+            >
+              {form.formState.isSubmitting ? "Creating..." : "Create AI Mentor"}
+            </Button>
+          </div>
+        </div>
+        {form.formState.errors.root?.message ? (
+          <p className="text-sm text-red-600 text-center">
+            {form.formState.errors.root.message}
+          </p>
+        ) : null}
       </form>
     </Form>
   );

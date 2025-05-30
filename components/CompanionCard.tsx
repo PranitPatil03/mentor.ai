@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+
 import React from "react";
+import BookmarkButton from "./BookmarkButton";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
 
 interface CompanionTypeProps {
   id: string;
@@ -9,33 +12,29 @@ interface CompanionTypeProps {
   subject: string;
   duration: number;
   color: string;
+  bookmarked: boolean;
 }
 
-const CompanionCard = ({
+const CompanionCard = async ({
   id,
   name,
   topic,
   subject,
   duration,
   color,
+  bookmarked,
 }: CompanionTypeProps) => {
+  const user = await getCurrentSupabaseUser();
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button className="companion-bookmark">
-          <Image
-            src="/icons/bookmark.svg"
-            alt="bookmark"
-            width={12.5}
-            height={15}
-          />
-        </button>
+        <BookmarkButton id={id} bookmarked={bookmarked} userSignedIn={!!user} />
       </div>
 
       <h2 className="text-2xl font-bold">{name}</h2>
-      <p className="text-sm">{topic}</p>
-      <div className="flex items-center gap-2">
+      <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">{topic}</p>
+      <div className="flex items-center gap-2 mt-auto">
         <Image
           src="/icons/clock.svg"
           alt="duration"
@@ -47,7 +46,7 @@ const CompanionCard = ({
 
       <Link href={`/companions/${id}`} className="w-full">
         <button className="btn-primary w-full justify-center hover:bg-neutral-800 hover:scale-104 hover:shadow-md transition duration-200">
-          Watch Lesson
+          Start Session
         </button>
       </Link>
     </article>

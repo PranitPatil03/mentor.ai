@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -9,6 +8,9 @@
 
   --cta: #2c2c2c;
   --cta-gold: #fccc41;
+  --hero-bg: #06060a;
+  --hero-purple: #7c3aed;
+  --hero-purple-light: #a78bfa;
   --radius: 0.625rem;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -46,11 +48,12 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-hero-bg: var(--hero-bg);
+  --color-hero-purple: var(--hero-purple);
   --color-cta: var(--cta);
   --color-cta-gold: var(--cta-gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-bricolage: "Bricolage Grotesque", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -86,7 +89,7 @@
 }
 
 body {
-  font-family: var(--font-bricolage);
+  font-family: var(--font-geist-sans), sans-serif;
 }
 
 .dark {
@@ -128,37 +131,53 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: #ffffff;
+    min-height: 100vh;
   }
   main {
-    @apply mx-auto px-14 flex flex-col gap-8 bg-background h-full max-w-[1400px] pt-10 max-sm:px-2;
+    @apply mx-auto px-14 flex flex-col gap-8 bg-transparent h-full max-w-[1400px] pt-0 max-sm:px-2;
   }
   h1 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-light tracking-tight text-gray-900;
+  }
+  h2,
+  h3 {
+    @apply font-light tracking-tight text-gray-900;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
   }
 }
 
 @layer components {
+  .landing-page-shell {
+    @apply relative flex flex-col gap-0 overflow-x-hidden;
+    background: #fff;
+  }
   .home-section {
     @apply flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center;
   }
   .companions-grid {
-    @apply flex flex-wrap gap-4 w-full max-md:justify-center;
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 w-full;
   }
   .companion-card {
-    @apply flex flex-col rounded-4xl border border-black px-4 py-4 gap-5 w-full min-lg:max-w-[410px] justify-between;
+    @apply flex flex-col rounded-xl border border-white/80 bg-white/75 backdrop-blur-sm p-5 gap-4 w-full justify-between shadow-[0_2px_10px_rgba(0,0,0,0.04)];
   }
   .subject-badge {
-    @apply bg-black text-white rounded-4xl text-sm px-2 py-1 capitalize;
+    @apply bg-black text-white rounded-4xl text-xs px-3 py-1 capitalize tracking-wide;
   }
   .companion-bookmark {
     @apply px-2 bg-black rounded-4xl flex items-center h-full aspect-square cursor-pointer;
   }
   .input {
-    @apply !border-black !bg-white focus-visible:!ring-0 focus-visible:!border-black !w-full;
+    @apply border border-gray-300 bg-gray-50 text-gray-900 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:border-indigo-400 w-full block;
   }
   .rounded-border {
-    @apply rounded-4xl border border-black;
+    @apply rounded-2xl border border-black/10 bg-white/80 backdrop-blur-sm shadow-[0_2px_10px_rgba(0,0,0,0.04)];
   }
   .cta-section {
     @apply bg-cta text-white rounded-4xl px-7 py-10 flex flex-col items-center text-center gap-5 w-1/3 max-lg:w-1/2 max-md:w-full;
@@ -167,13 +186,16 @@ body {
     @apply bg-cta-gold rounded-4xl px-3 py-1.5 text-black;
   }
   .btn-primary {
-    @apply bg-primary text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2;
+    @apply bg-white border border-black/15 text-gray-900 font-medium rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2 shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:bg-gray-50 hover:shadow-[0_6px_18px_rgba(15,23,42,0.08)] transition-all duration-200;
   }
   .navbar {
-    @apply flex items-center justify-between mx-auto w-full px-14 py-4 bg-white max-sm:px-4;
+    @apply flex items-center justify-between mx-auto w-full px-10 py-2.5 bg-transparent max-sm:px-4;
   }
   .btn-signin {
-    @apply border border-black rounded-4xl px-4 py-2.5 text-sm font-semibold flex items-center gap-2 cursor-pointer;
+    @apply bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white rounded-xl px-5 py-2.5 text-sm font-medium flex items-center gap-2 cursor-pointer shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] transition-all duration-200;
+  }
+  .profile-chip {
+    @apply inline-flex items-center justify-center rounded-full border border-black/10 bg-white p-[3px] shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_4px_14px_rgba(15,23,42,0.1)] transition-all;
   }
   .companion-list {
     @apply rounded-4xl border border-black px-7 pt-7 pb-10 max-lg:w-full bg-white;
@@ -183,11 +205,11 @@ body {
   }
 
   .companion-section {
-    @apply border-2 border-orange-500 w-2/3 max-sm:w-full flex flex-col gap-4 justify-center items-center rounded-lg;
+    @apply flex-1 max-sm:w-full flex flex-col gap-3 justify-center items-center rounded-2xl border border-black/8 bg-white p-6;
   }
 
   .companion-avatar {
-    @apply size-[300px] flex items-center justify-center rounded-lg max-sm:size-[100px] mt-4;
+    @apply size-[200px] flex items-center justify-center rounded-2xl max-sm:size-[100px];
   }
   .companion-lottie {
     @apply size-[300px] max-sm:size-[100px];
@@ -201,17 +223,151 @@ body {
   }
 
   .btn-mic {
-    @apply border-2 border-black rounded-lg flex flex-col gap-2 items-center py-8 max-sm:py-2 cursor-pointer w-full;
+    @apply border border-black/10 bg-white rounded-xl flex items-center justify-center gap-2 px-4 py-2.5 cursor-pointer shadow-[0_2px_10px_rgba(0,0,0,0.04)] hover:bg-gray-50 transition-colors text-sm font-medium;
   }
 
   .transcript {
-    @apply relative flex flex-col gap-4 w-full items-center pt-10 flex-grow overflow-hidden;
+    @apply relative flex flex-col w-full pt-6 flex-grow overflow-hidden;
   }
   .transcript-message {
-    @apply overflow-y-auto w-full flex flex-col gap-4 max-sm:gap-2 pr-2 h-full text-2xl;
+    @apply overflow-y-auto w-full flex flex-col-reverse gap-3 max-sm:gap-2 pr-2 h-full text-base;
   }
   .transcript-fade {
-    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-40 max-sm:h-20 bg-gradient-to-t from-background via-background/90 to-transparent z-10;
+    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-28 max-sm:h-16 bg-gradient-to-t from-white via-white/90 to-transparent z-10;
+  }
+
+  /* ── Landing Page ── */
+  .hero-section {
+    @apply relative flex flex-col items-center text-center pt-32 md:pt-40 pb-20 px-4 gap-6 overflow-hidden;
+    background: #fff;
+  }
+  .hero-badge {
+    @apply bg-purple-100 text-purple-700 border border-purple-200 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest;
+  }
+  .hero-headline {
+    @apply text-5xl max-sm:text-3xl font-normal tracking-tight text-gray-900 leading-[1.1];
+  }
+  .hero-gradient-text {
+    @apply bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent;
+  }
+  .hero-subtext {
+    @apply text-gray-600 max-w-2xl text-lg leading-relaxed;
+  }
+  .hero-cta-primary {
+    @apply bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] inline-flex h-12 px-8 items-center justify-center text-base;
+  }
+  .hero-cta-secondary {
+    @apply bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-200 shadow-sm hover:shadow rounded-xl transition-all duration-200 inline-flex h-12 px-8 items-center justify-center text-base;
+  }
+  .hero-cta-secondary-dark {
+    @apply border border-white/20 hover:border-white/50 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors;
+  }
+
+  /* ── Bento Features ── */
+  .features-section {
+    @apply py-20 px-2 bg-transparent;
+  }
+
+  /*
+    Row 1: 40% | 30% | 30%  → template-columns: 4fr 3fr 3fr
+    Row 2: 30% | 30% | 40%  → template-columns: 3fr 3fr 4fr
+    We achieve this with a 10-column grid:
+      row1-wide  = span 4
+      row1-narrow = span 3
+      row2-narrow = span 3
+      row2-wide  = span 4
+  */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1rem;
+  }
+  .bento-card {
+    @apply rounded-xl border border-white/80 bg-white/75 backdrop-blur-sm p-5 flex flex-col shadow-[0_2px_10px_rgba(0,0,0,0.04)];
+  }
+  .bento-card--row1-wide {
+    grid-column: span 4;
+  }
+  .bento-card--row1-narrow {
+    grid-column: span 3;
+  }
+  .bento-card--row2-narrow {
+    grid-column: span 3;
+  }
+  .bento-card--row2-wide {
+    grid-column: span 4;
+  }
+  .bento-icon {
+    @apply text-3xl;
+  }
+  @media (max-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .bento-card--row1-wide,
+    .bento-card--row1-narrow,
+    .bento-card--row2-narrow,
+    .bento-card--row2-wide {
+      grid-column: span 1;
+    }
+  }
+  @media (max-width: 640px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+    .bento-card--row1-wide,
+    .bento-card--row1-narrow,
+    .bento-card--row2-narrow,
+    .bento-card--row2-wide {
+      grid-column: span 1;
+    }
+  }
+
+  /* ── Pricing ── */
+  .pricing-card {
+    @apply relative rounded-3xl p-8 md:p-10 flex flex-col gap-7 w-full sm:flex-1 sm:max-w-[430px] shadow-[0_8px_26px_rgba(35,35,55,0.08)] hover:shadow-[0_14px_34px_rgba(35,35,55,0.11)] transition-all;
+  }
+  .pricing-card-free {
+    @apply bg-white/75 backdrop-blur-sm border border-white/90;
+  }
+  .pricing-card-pro {
+    @apply bg-white border-none overflow-hidden;
+  }
+  .pricing-card-header {
+    @apply flex flex-col;
+  }
+  .pricing-features {
+    @apply flex flex-col gap-3.5 flex-1;
+  }
+  .pricing-feature-item {
+    @apply flex items-start gap-3 text-sm;
+  }
+  .pricing-check {
+    @apply mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold;
+  }
+  .pricing-check-free {
+    @apply bg-emerald-100 text-emerald-600;
+  }
+  .pricing-check-pro {
+    @apply bg-violet-100 text-violet-600;
+  }
+  .pricing-cta-outline {
+    @apply bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 shadow-sm hover:shadow rounded-xl px-6 py-3 font-medium text-sm transition-all duration-200 block;
+  }
+  .pricing-cta-pro {
+    @apply bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium rounded-xl px-6 py-3 text-sm transition-all duration-200 cursor-pointer shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] hover:scale-[1.02];
+  }
+  .pricing-popular-badge {
+    @apply absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-500 to-indigo-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-[0_4px_12px_rgba(109,40,217,0.35)];
+  }
+  .pricing-pro-spot {
+    @apply pointer-events-none absolute -top-10 -right-10 size-44 rounded-full bg-violet-100/80 blur-2xl;
+  }
+  .pricing-section-landing {
+    @apply py-16 px-2 bg-white;
+  }
+  .pricing-cta-banner {
+    @apply bg-white/70 backdrop-blur-sm rounded-3xl px-12 py-16 text-center w-full;
   }
 }
 

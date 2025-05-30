@@ -1,109 +1,147 @@
-## 📋 <a name="table">Table of Contents</a>
+# mentor.ai
 
-1. 🤖 [Introduction](#introduction)
-2. ⚙️ [Tech Stack](#tech-stack)
-3. 🔋 [Features](#features)
-4. 🤸 [Quick Start](#quick-start)
+AI-powered LMS with custom voice companions, Supabase auth, and Stripe subscriptions.
 
-## <a name="introduction">🤖 Introduction</a>
+## Table of Contents
 
-LMS SaaS app featuring user authentication, subscriptions, and payments using Next.js, Supabase, and Stripe. It’s a real-time teaching platform that integrates Vapi's AI voice agent to enable seamless, interactive learning sessions.
+1. [Stack](#stack)
+2. [Features](#features)
+3. [Local Setup](#local-setup)
+4. [Environment Variables](#environment-variables)
+5. [Supabase Setup](#supabase-setup)
+6. [Google Auth Setup](#google-auth-setup)
+7. [Stripe Setup](#stripe-setup)
+8. [Build and Deploy](#build-and-deploy)
+9. [Current Notes](#current-notes)
 
-## <a name="tech-stack">⚙️ Tech Stack</a>
+## Stack
 
-- **[Clerk](https://clerk.com/)** is a unified platform for authentication, user management, and billing. It offers embeddable UI components, flexible APIs, and admin dashboards for secure user management. Clerk also simplifies subscription management, allowing you to define plans, create pricing pages, and control access based on subscription tiers—all in one solution.
+- Next.js 15 (App Router) + React 19 + TypeScript
+- Tailwind CSS + shadcn/ui
+- Supabase (Auth + PostgreSQL + Row Level Security)
+- Stripe (checkout + webhooks)
+- Vapi Web SDK for real-time voice sessions
 
-* **[Next.js](https://nextjs.org/)** is a powerful React framework that enables the development of fast, scalable web applications with features like server-side rendering, static site generation, and API routes for building full-stack applications.
+## Features
 
-* **[Sentry](https://sentry.io)** is an error tracking and performance monitoring tool that helps developers fix bugs faster by providing real-time alerts, stack traces, and performance insights.
+1. Subscription checkout: Stripe-powered Free to Pro upgrade flow enables monetization.
+2. Secure authentication: Supabase auth protects user accounts and private data access.
+3. AI voice tutoring: Real-time Vapi sessions provide interactive, spoken learning support.
+4. Companion builder: Users can create and manage personalized AI tutors by topic and style.
+5. Companion discovery: Search and filter help learners quickly find relevant companions.
+6. Session history: Past sessions are saved so learners can track their progress.
+7. Bookmarks: Users can save favorite companions for faster repeat learning.
+8. Google OAuth: One-click social sign-in reduces friction during onboarding.
 
-* **[shadcn/ui](https://ui.shadcn.com/)** is a customizable component library built on Radix UI and Tailwind CSS. It offers a modern, accessible design system with pre-built components that are easy to theme and extend, making it ideal for building polished UIs with minimal effort.
+## Local Setup
 
-- **[Supabase](https://supabase.com/)** is an open-source backend-as-a-service platform that provides instant APIs, real-time subscriptions, authentication, storage, and a PostgreSQL database, enabling developers to build scalable and secure applications with ease.
-
-* **[Tailwind CSS](https://tailwindcss.com/)** is a utility-first CSS framework that allows developers to design custom user interfaces by applying low-level utility classes directly in HTML, streamlining the design process.
-* **[TypeScript](https://www.typescriptlang.org/)** is a superset of JavaScript that adds static typing, providing better tooling, code quality, and error detection for developers, making it ideal for building large-scale applications.
-
-- **[Vapi](https://vapi.ai/)** is a developer-centric voice AI platform that enables the creation of conversational voice agents with low-latency voice interactions, speech-to-text, and text-to-speech capabilities. It supports multilingual conversations, customizable voices, and seamless integration with various AI models and tools.
-
-* **[Zod](https://zod.dev/)** is a TypeScript-first schema validation library that provides a simple and expressive way to define and validate data structures. Zod ensures data integrity by catching errors early during development.
-
-## <a name="features">🔋 Features</a>
-
-👉 **AI Voice Agents**: Take tutoring sessions with voiced AIs specializing in the topics you want to get better at.
-
-👉 **Authentication**: Secure user sign-up and sign-in with Clerk; Google authentication and many more.
-
-👉 **Billing & Subscriptions**: Easily manage plans, upgrades, and payment details.
-
-👉 **Bookmarks and Session History**: Let users organise their learning by bookmarking tutors and accessing previous sessions.
-
-👉 **Code Reusability**: Leverage reusable components and a modular codebase for efficient development.
-
-👉 **Create a Tutor**: Create your own AI tutors, choosing a subject, topic, and style of conversation.
-
-👉 **Cross-Device Compatibility**: Fully responsive design that works seamlessly across all devices.
-
-👉 **Database Integration**: Uses Supabase for real-time data handling and storage needs.
-
-👉 **Modern UI/UX**: Clean, responsive design built with Tailwind CSS and shadcn/ui for a sleek user experience.
-
-👉 **Scalable Tech Stack**: Built with Next.js for a fast, production-ready web application that scales seamlessly.
-
-👉 **Search Functionality**: Find companions quickly with robust filters and search bar.
-
-## <a name="quick-start">🤸 Quick Start</a>
-
-**Prerequisites**
-
-Make sure you have the following installed on your machine:
-
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/en)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
-
-**Cloning the Repository**
-
-```bash
-https://github.com/adityaChauhan2510/Converso-AI-LMS.git
-cd Converso-AI-LMS
-```
-
-**Installation**
-
-Install the project dependencies using npm:
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-**Set Up Environment Variables**
+### 2. Create env file
 
-Create a new file named `.env` in the root of your project and add the following content:
+Use `.env.local` in the project root.
 
-```env
-# Sentry
-SENTRY_AUTH_TOKEN=
+### 3. Setup database schema
 
-# Vapi
-NEXT_PUBLIC_VAPI_WEB_TOKEN=
+Run SQL from [supabase/schema.sql](supabase/schema.sql) in Supabase SQL Editor.
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
-
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
-
-**Running the Project**
+### 4. Start dev server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the project.
+Open `http://localhost:3000`.
+
+## Environment Variables
+
+Add these to `.env.local` (local) and Vercel project env vars (production):
+
+```env
+# Vapi
+NEXT_PUBLIC_VAPI_WEB_TOKEN=
+# Optional right now (not used by current code paths, but safe to keep)
+VAPI_PRIVATE_KEY=
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+# Set at least one of these two:
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=
+
+# App limits
+MAX_FREE_COMPANIONS=3
+
+# Stripe
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRO_PRICE_ID=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+# Optional metadata/reference
+STRIPE_PRODUCT_ID=
+
+# App URL
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+```
+
+## Supabase Setup
+
+1. Create a Supabase project.
+2. Copy Project URL and Anon (or Publishable) key to env vars.
+3. Open SQL Editor and run [supabase/schema.sql](supabase/schema.sql).
+4. In Authentication -> URL Configuration:
+	- Set Site URL (example: `https://youraimentor.vercel.app`)
+	- Add Redirect URLs:
+	  - `http://localhost:3000/auth/callback`
+	  - `https://youraimentor.vercel.app/auth/callback`
+5. Verify Row Level Security policies are enabled for companions, bookmarks, and session history tables (included in [supabase/schema.sql](supabase/schema.sql)).
+
+## Google Auth Setup
+
+1. In Supabase -> Authentication -> Providers, enable Google.
+2. In Google Cloud Console:
+	- Configure OAuth consent screen.
+	- Create OAuth Client ID (Web application).
+	- Add Authorized redirect URI:
+	  - `https://<your-supabase-project-ref>.supabase.co/auth/v1/callback`
+3. Copy Google Client ID + Client Secret into Supabase Google provider settings.
+4. Test sign-in from your auth page.
+
+## Stripe Setup
+
+1. Create or open your Stripe product.
+2. Create a recurring Price for the Pro plan and copy its `price_...` id.
+3. Set `STRIPE_PRO_PRICE_ID` with that value.
+4. Create webhook endpoint:
+	- Local: `http://localhost:3000/api/stripe/webhook`
+	- Production: `https://youraimentor.vercel.app/api/stripe/webhook`
+5. Subscribe at least these events:
+	- `checkout.session.completed`
+	- `customer.subscription.deleted`
+6. Copy webhook signing secret (`whsec_...`) to `STRIPE_WEBHOOK_SECRET`.
+
+### Optional but recommended Stripe events
+
+- `customer.subscription.updated`
+- `invoice.payment_failed`
+- `invoice.paid`
+
+## Build and Deploy
+
+### Build locally
+
+```bash
+npm run build
+```
+
+### Deploy on Vercel
+
+1. Import repository to Vercel.
+2. Add all required environment variables.
+3. Build command: `npm run build`
+4. Install command: `npm install`
+5. Redeploy after each env change.
