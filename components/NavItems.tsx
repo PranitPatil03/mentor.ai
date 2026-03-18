@@ -5,21 +5,22 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 const navItems = [
-  { label: "Home", href: "/" },
   { label: "Companions", href: "/companions" },
-  { label: "My Journey", href: "/my-journey" },
+  { label: "Pricing", href: "/subscription" },
 ];
 
 const NavItems = () => {
   const pathname = usePathname();
   return (
-    <nav className="flex items-center text-xl gap-4">
+    <nav className="flex items-center text-sm font-medium gap-5">
       {navItems.map(({ label, href }) => (
         <Link
           href={href}
           key={label}
           className={cn(
-            pathname === href && "font-bold underline text-yellow-700"
+            pathname === href
+              ? "font-semibold text-indigo-600"
+              : "text-gray-600 hover:text-gray-900 transition-colors"
           )}
         >
           {label}

@@ -10,35 +10,44 @@ import {
   getUserCompanions,
   getUserSessions,
 } from "@/lib/actions/companion.action";
-import { currentUser } from "@clerk/nextjs/server";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
 const Profile = async () => {
-  const user = await currentUser();
+  const user = await getCurrentSupabaseUser();
   if (!user) redirect("/sign-in");
 
   const companions = await getUserCompanions(user.id);
   const sessionHistory = await getUserSessions(user.id);
   const bookmarkedCompanions = await getBookmarkedCompanions(user.id);
+  const displayName =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "Learner";
+  const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
 
   return (
     <>
       <section className="flex justify-between gap-4 max-sm:flex-col items-center py-5">
         <div className="flex gap-4 items-center">
-          <Image
-            src={user.imageUrl}
-            alt={user.firstName!}
-            width={110}
-            height={110}
-          />
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={displayName}
+              width={110}
+              height={110}
+              className="rounded-lg"
+            />
+          ) : (
+            <div className="size-[110px] rounded-lg bg-neutral-100 flex items-center justify-center text-4xl font-semibold">
+              {displayName.slice(0, 1).toUpperCase()}
+            </div>
+          )}
           <div className="flex flex-col gap-2">
-            <h1 className="font-bold text-2xl">
-              {user.firstName} {user.lastName}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {user.emailAddresses[0].emailAddress}
-            </p>
+            <h1 className="font-bold text-2xl">{displayName}</h1>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
         </div>
 

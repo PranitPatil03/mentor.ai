@@ -1,16 +1,17 @@
 import CompanionForm from "@/components/CompanionForm";
 import { newCompanionPermissions } from "@/lib/actions/companion.action";
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const NewCompanion = async () => {
-  const { userId } = await auth();
+  const user = await getCurrentSupabaseUser();
+  if (!user) redirect("/sign-in");
+
   const canCreateCompanion = await newCompanionPermissions();
 
-  if (!userId) redirect("/sign-in");
   return (
     <main className="min-lg:w-1/3 min-md:w-2/3 items-center justify-center">
       {canCreateCompanion ? (

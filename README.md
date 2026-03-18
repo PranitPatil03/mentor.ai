@@ -11,7 +11,7 @@ LMS SaaS app featuring user authentication, subscriptions, and payments using Ne
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
 
-- **[Clerk](https://clerk.com/)** is a unified platform for authentication, user management, and billing. It offers embeddable UI components, flexible APIs, and admin dashboards for secure user management. Clerk also simplifies subscription management, allowing you to define plans, create pricing pages, and control access based on subscription tiers—all in one solution.
+- **[Supabase Auth](https://supabase.com/docs/guides/auth)** handles secure user sign-up and sign-in with session management.
 
 * **[Next.js](https://nextjs.org/)** is a powerful React framework that enables the development of fast, scalable web applications with features like server-side rendering, static site generation, and API routes for building full-stack applications.
 
@@ -32,7 +32,7 @@ LMS SaaS app featuring user authentication, subscriptions, and payments using Ne
 
 👉 **AI Voice Agents**: Take tutoring sessions with voiced AIs specializing in the topics you want to get better at.
 
-👉 **Authentication**: Secure user sign-up and sign-in with Clerk; Google authentication and many more.
+👉 **Authentication**: Secure user sign-up and sign-in with Supabase Auth.
 
 👉 **Billing & Subscriptions**: Easily manage plans, upgrades, and payment details.
 
@@ -88,17 +88,15 @@ SENTRY_AUTH_TOKEN=
 # Vapi
 NEXT_PUBLIC_VAPI_WEB_TOKEN=
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
-
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# App limits
+MAX_FREE_COMPANIONS=3
 ```
+
+Run [supabase/schema.sql](supabase/schema.sql) in Supabase SQL Editor to create the required tables and policies.
 
 **Running the Project**
 

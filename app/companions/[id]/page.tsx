@@ -1,7 +1,7 @@
 import CompanionComponent from "@/components/CompanionComponent";
 import { getCompanion } from "@/lib/actions/companion.action";
 import { getSubjectColor } from "@/lib/utils";
-import { currentUser } from "@clerk/nextjs/server";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -15,12 +15,12 @@ interface CompanionSessionPageProps {
 const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
   const { id } = await params;
   const companion = await getCompanion(id);
-  const user = await currentUser();
-
-  const { name, subject, title, topic, duration } = companion;
+  const user = await getCurrentSupabaseUser();
 
   if (!user) redirect("/sign-in");
-  if (!name) redirect("/companions");
+  if (!companion?.name) redirect("/companions");
+
+  const { name, subject, topic, duration } = companion;
 
   return (
     <>
@@ -54,8 +54,13 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
       <CompanionComponent
         {...companion}
         companionId={id}
-        userName={user.firstName!}
-        userImage={user.imageUrl!}
+        userName={
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split("@")[0] ||
+          "Learner"
+        }
+        userImage={(user.user_metadata?.avatar_url as string) || "/icons/cap.svg"}
       />
     </>
   );

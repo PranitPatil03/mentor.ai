@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import React from "react";
 import BookmarkButton from "./BookmarkButton";
-import { currentUser } from "@clerk/nextjs/server";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
 
 interface CompanionTypeProps {
   id: string;
@@ -24,7 +24,7 @@ const CompanionCard = async ({
   color,
   bookmarked,
 }: CompanionTypeProps) => {
-  const user = await currentUser();
+  const user = await getCurrentSupabaseUser();
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">

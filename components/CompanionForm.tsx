@@ -63,12 +63,23 @@ const CompanionForm = () => {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const companion = await createCompanion(values);
-    if (companion) {
-      redirect(`/companions/${companion.id}`);
-    } else {
-      console.log("Failed to create a companion");
-      redirect("/");
+    try {
+      const companion = await createCompanion(values);
+
+      if (companion) {
+        redirect(`/companions/${companion.id}`);
+      }
+
+      form.setError("root", {
+        message: "Failed to create companion. Please try again.",
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to create companion. Please try again.";
+
+      form.setError("root", { message });
     }
   };
 
@@ -223,6 +234,11 @@ const CompanionForm = () => {
         <Button type="submit" className="w-full cursor-pointer">
           Build Your Companion
         </Button>
+        {form.formState.errors.root?.message ? (
+          <p className="text-sm text-red-600 text-center">
+            {form.formState.errors.root.message}
+          </p>
+        ) : null}
       </form>
     </Form>
   );

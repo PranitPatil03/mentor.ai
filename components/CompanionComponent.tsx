@@ -147,7 +147,7 @@ const CompanionComponent = ({
         {/* USER_SECTION, MIC BUTTON, START BUTTON */}
         <div className="flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row">
           <div className="border-2 border-black flex flex-col gap-4 items-center rounded-lg py-8 max-sm:hidden">
-            <Image
+            <img
               src={userImage}
               alt={userName}
               width={130}

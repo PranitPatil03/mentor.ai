@@ -1,9 +1,14 @@
-import { SignIn } from "@clerk/nextjs";
+import SupabaseAuthForm from "@/components/SupabaseAuthForm";
+import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+  const user = await getCurrentSupabaseUser();
+  if (user) redirect("/");
+
   return (
-    <main className="flex items-center justify-center">
-      <SignIn />
-    </main>
+    <section className="flex w-full min-h-[80vh] items-center justify-center py-10">
+      <SupabaseAuthForm />
+    </section>
   );
 }

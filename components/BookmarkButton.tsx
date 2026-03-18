@@ -1,7 +1,6 @@
 "use client";
-import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { addBookmark, removeBookmark } from "@/lib/actions/companion.action";
 import React from "react";
 
@@ -17,9 +16,10 @@ const BookmarkButton = ({
   userSignedIn,
 }: BookMarkButtonProps) => {
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleBookmark = async () => {
-    if (!userSignedIn) redirect("/sign-in");
+    if (!userSignedIn) router.push("/sign-in");
     else {
       if (bookmarked) await removeBookmark(id, pathname);
       else await addBookmark(id, pathname);
