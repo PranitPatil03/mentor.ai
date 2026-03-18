@@ -113,3 +113,26 @@ create policy session_history_delete_own
 
 -- Refresh Supabase API schema cache so new tables are immediately visible.
 notify pgrst, 'reload schema';
+
+-- ────────────────────────────────────────────────
+-- Subscriptions (Stripe Pro status)
+-- ────────────────────────────────────────────────
+create table if not exists public.subscriptions (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.subscriptions enable row level security;
+
+drop policy if exists subscriptions_select_own on public.subscriptions;
+create policy subscriptions_select_own
+  on public.subscriptions
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+notify pgrst, 'reload schema';

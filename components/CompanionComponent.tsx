@@ -21,6 +21,16 @@ interface PartialTranscript {
   content: string;
 }
 
+/* ─── Animated sound-wave bars ─── */
+const SoundWave = ({ color = "bg-indigo-500" }: { color?: string }) => (
+  <span className="inline-flex items-end gap-[2px]">
+    <span className={cn("h-2.5 w-[3px] animate-bounce rounded-full", color, "[animation-delay:0ms]")} />
+    <span className={cn("h-3.5 w-[3px] animate-bounce rounded-full", color, "[animation-delay:150ms]")} />
+    <span className={cn("h-2 w-[3px] animate-bounce rounded-full", color, "[animation-delay:300ms]")} />
+    <span className={cn("h-3 w-[3px] animate-bounce rounded-full", color, "[animation-delay:100ms]")} />
+  </span>
+);
+
 const CompanionComponent = ({
   companionId,
   subject,
@@ -42,10 +52,7 @@ const CompanionComponent = ({
   const transcriptRef = useRef<HTMLDivElement>(null);
   const speakingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const sessionActive =
-    callStatus === CallStatus.ACTIVE ||
-    callStatus === CallStatus.CONNECTING ||
-    callStatus === CallStatus.FINISHED;
+  const showChat = callStatus === CallStatus.ACTIVE || callStatus === CallStatus.FINISHED;
 
   const setSpeakingRole = (role: SpeakerRole, holdForMs = 900) => {
     setActiveSpeaker(role);
@@ -189,15 +196,12 @@ const CompanionComponent = ({
   const userSpeaking = activeSpeaker === "user";
   const tutorName = name.split(" ")[0].replace(/[.,]/g, "");
 
-  /* ─── Tutor profile card ─── */
+  /* ─── Tutor profile card (no description, wave icon for speaking) ─── */
   const TutorCard = ({ big }: { big?: boolean }) => (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-2xl border p-4 transition-all",
-        big && "flex-col gap-4 p-6 text-center",
-        tutorSpeaking
-          ? "border-emerald-300 bg-emerald-50 shadow-[0_0_12px_rgba(16,185,129,0.2)]"
-          : "border-black/8 bg-white"
+        "flex items-center gap-3 rounded-2xl border border-black/8 bg-white p-4 transition-all",
+        big && "flex-col gap-4 p-6 text-center"
       )}
     >
       <div
@@ -219,36 +223,18 @@ const CompanionComponent = ({
           "truncate font-semibold text-gray-900",
           big ? "text-lg" : "text-sm"
         )}>{tutorName}</p>
-        <p className={cn(
-          "font-medium",
-          big ? "text-sm" : "text-xs",
-          tutorSpeaking ? "text-emerald-600" : "text-gray-400"
-        )}>
-          {tutorSpeaking ? "Speaking..." : "Tutor"}
-        </p>
-        {big && (
-          <p className="mt-1 text-xs text-gray-400 capitalize">{subject} · {topic}</p>
-        )}
+        <p className={cn("text-xs font-medium text-gray-400")}>Tutor</p>
       </div>
-      {tutorSpeaking && (
-        <span className="flex gap-0.5">
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-emerald-500 [animation-delay:0ms]" />
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-emerald-500 [animation-delay:150ms]" />
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-emerald-500 [animation-delay:300ms]" />
-        </span>
-      )}
+      {tutorSpeaking && <SoundWave color="bg-emerald-500" />}
     </div>
   );
 
-  /* ─── User profile card ─── */
+  /* ─── User profile card (no description, wave icon for speaking) ─── */
   const UserCard = ({ big }: { big?: boolean }) => (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-2xl border p-4 transition-all",
-        big && "flex-col gap-4 p-6 text-center",
-        userSpeaking
-          ? "border-indigo-300 bg-indigo-50 shadow-[0_0_12px_rgba(99,102,241,0.2)]"
-          : "border-black/8 bg-white"
+        "flex items-center gap-3 rounded-2xl border border-black/8 bg-white p-4 transition-all",
+        big && "flex-col gap-4 p-6 text-center"
       )}
     >
       {userImage ? (
@@ -273,77 +259,72 @@ const CompanionComponent = ({
           "truncate font-semibold text-gray-900",
           big ? "text-lg" : "text-sm"
         )}>{userName}</p>
-        <p className={cn(
-          "font-medium",
-          big ? "text-sm" : "text-xs",
-          userSpeaking ? "text-indigo-600" : "text-gray-400"
-        )}>
-          {userSpeaking ? "Speaking..." : "You"}
-        </p>
+        <p className="text-xs font-medium text-gray-400">You</p>
       </div>
-      {userSpeaking && (
-        <span className="flex gap-0.5">
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-indigo-500 [animation-delay:0ms]" />
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-indigo-500 [animation-delay:150ms]" />
-          <span className="h-3 w-[3px] animate-bounce rounded-full bg-indigo-500 [animation-delay:300ms]" />
-        </span>
-      )}
+      {userSpeaking && <SoundWave color="bg-indigo-500" />}
     </div>
   );
 
-  /* ─── Buttons ─── */
-  const ActionButtons = () => (
-    <div className="flex flex-col gap-2">
-      {callStatus === CallStatus.ACTIVE && (
-        <button
-          type="button"
-          className={cn(
-            "btn-mic justify-center",
-            isMuted && "border-red-200 bg-red-50 text-red-600"
-          )}
-          onClick={toggleMicrophone}
-        >
-          <Image
-            src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
-            alt="mic"
-            width={22}
-            height={22}
-          />
-          <span>{isMuted ? "Unmute" : "Mute"}</span>
-        </button>
+  /* ─── Mic button (always visible once in pre-session or active) ─── */
+  const MicButton = () => (
+    <button
+      type="button"
+      className={cn(
+        "btn-mic justify-center",
+        isMuted && "border-red-200 bg-red-50 text-red-600",
+        callStatus !== CallStatus.ACTIVE && "pointer-events-none opacity-40"
       )}
+      onClick={toggleMicrophone}
+    >
+      <Image
+        src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
+        alt="mic"
+        width={22}
+        height={22}
+      />
+      <span>{isMuted ? "Unmute" : "Mute"}</span>
+    </button>
+  );
 
-      <button
-        type="button"
-        className={cn(
-          "w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200",
-          callStatus === CallStatus.ACTIVE
-            ? "bg-red-600 text-white hover:bg-red-700"
-            : "border border-violet-700 bg-gradient-to-b from-violet-500 to-indigo-600 text-white shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)]",
-          callStatus === CallStatus.CONNECTING && "animate-pulse",
-          callStatus === CallStatus.FINISHED && "pointer-events-none opacity-50"
-        )}
-        onClick={callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall}
-        disabled={callStatus === CallStatus.FINISHED}
-      >
-        {callStatus === CallStatus.ACTIVE
-          ? "End Session"
-          : callStatus === CallStatus.CONNECTING
-            ? "Connecting..."
-            : callStatus === CallStatus.FINISHED
-              ? "Session Ended"
-              : "Start Session"}
-      </button>
-    </div>
+  /* ─── Start / End session button ─── */
+  const SessionButton = () => (
+    <button
+      type="button"
+      className={cn(
+        "w-full cursor-pointer rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200",
+        callStatus === CallStatus.ACTIVE
+          ? "bg-red-600 text-white hover:bg-red-700"
+          : "border border-violet-700 bg-gradient-to-b from-violet-500 to-indigo-600 text-white shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)]",
+        callStatus === CallStatus.CONNECTING && "animate-pulse",
+        callStatus === CallStatus.FINISHED && "pointer-events-none opacity-50"
+      )}
+      onClick={callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall}
+      disabled={callStatus === CallStatus.FINISHED || callStatus === CallStatus.CONNECTING}
+    >
+      {callStatus === CallStatus.ACTIVE
+        ? "End Session"
+        : callStatus === CallStatus.CONNECTING
+          ? "Connecting..."
+          : callStatus === CallStatus.FINISHED
+            ? "Session Ended"
+            : "Start Session"}
+    </button>
   );
 
   /* ═══════════════════════════════════════════════
-     BEFORE session: big centered profiles + buttons
+     BEFORE session (INACTIVE or CONNECTING):
+     heading + big centered profiles + mic + button
      ═══════════════════════════════════════════════ */
-  if (!sessionActive) {
+  if (!showChat) {
     return (
-      <section className="flex h-[calc(100vh-120px)] items-center justify-center">
-        <div className="flex w-full max-w-md flex-col items-center gap-6">
+      <section className="flex h-[calc(100vh-120px)] flex-col items-center justify-center font-sans">
+        {/* Tutor heading */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
+          <p className="mt-1 text-sm capitalize text-gray-500">{subject} · {topic}</p>
+        </div>
+
+        <div className="flex w-full max-w-md flex-col items-center gap-5">
           <div className="flex w-full gap-4">
             <div className="flex-1">
               <TutorCard big />
@@ -352,19 +333,28 @@ const CompanionComponent = ({
               <UserCard big />
             </div>
           </div>
-          <div className="w-full max-w-[260px]">
-            <ActionButtons />
+
+          {/* Mic + session buttons */}
+          <div className="flex w-full max-w-[260px] flex-col gap-2">
+            <MicButton />
+            <SessionButton />
           </div>
+
+          {callStatus === CallStatus.CONNECTING && (
+            <p className="animate-pulse text-sm text-gray-400">
+              Setting up your session…
+            </p>
+          )}
         </div>
       </section>
     );
   }
 
   /* ═══════════════════════════════════════════════
-     DURING session: chat left, sidebar right
+     ACTIVE / FINISHED session: chat left, sidebar right
      ═══════════════════════════════════════════════ */
   return (
-    <section className="flex h-[calc(100vh-120px)] gap-4 max-md:flex-col">
+    <section className="flex h-[calc(100vh-120px)] gap-4 font-sans max-md:flex-col">
       {/* ── Left: Chat card ── */}
       <div className="flex flex-1 flex-col rounded-2xl border border-black/8 bg-white">
         <div
@@ -405,13 +395,13 @@ const CompanionComponent = ({
                   className={cn(
                     "max-w-[80%] rounded-2xl px-4 py-3",
                     partial.role === "assistant"
-                      ? "rounded-tl-md border border-dashed border-emerald-200 bg-emerald-50/60"
+                      ? "rounded-tl-md border border-dashed border-gray-200 bg-gray-50/60"
                       : "rounded-tr-md border border-dashed border-indigo-200 bg-indigo-50/60"
                   )}
                 >
                   <p className={cn(
                     "mb-0.5 text-xs font-semibold",
-                    partial.role === "assistant" ? "text-emerald-400" : "text-indigo-400"
+                    partial.role === "assistant" ? "text-gray-400" : "text-indigo-400"
                   )}>
                     {partial.role === "assistant" ? tutorName : userName}
                     <span className="ml-1 text-[10px] uppercase tracking-wide opacity-70">typing…</span>
@@ -427,7 +417,7 @@ const CompanionComponent = ({
             )}
 
             {messages.length === 0 && !partial && callStatus === CallStatus.ACTIVE && (
-              <p className="text-sm text-gray-400 text-center pt-8">
+              <p className="pt-8 text-center text-sm text-gray-400">
                 Listening…
               </p>
             )}
@@ -439,8 +429,9 @@ const CompanionComponent = ({
       <div className="flex w-full flex-col gap-3 md:w-[260px] md:min-w-[240px]">
         <TutorCard />
         <UserCard />
-        <div className="mt-1">
-          <ActionButtons />
+        <div className="mt-1 flex flex-col gap-2">
+          <MicButton />
+          <SessionButton />
         </div>
       </div>
     </section>

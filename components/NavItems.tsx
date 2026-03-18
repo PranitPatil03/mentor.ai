@@ -4,19 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const loggedInItems = [
-  {
-    label: "AI Mentors",
-    href: "/mentors",
-    activePaths: ["/mentors", "/companions", "/create-mentor"],
-  },
-  {
-    label: "Upgrade to Pro",
-    href: "/subscription",
-    activePaths: ["/subscription"],
-  },
-];
-
 const loggedOutItems = [
   {
     label: "AI Mentors",
@@ -30,8 +17,22 @@ const loggedOutItems = [
   },
 ];
 
-const NavItems = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const NavItems = ({ isLoggedIn, isPro }: { isLoggedIn: boolean; isPro?: boolean }) => {
   const pathname = usePathname();
+
+  const loggedInItems = [
+    {
+      label: "AI Mentors",
+      href: "/mentors",
+      activePaths: ["/mentors", "/companions", "/create-mentor"],
+    },
+    {
+      label: isPro ? "Pro Plan ✓" : "Upgrade to Pro",
+      href: "/subscription",
+      activePaths: ["/subscription"],
+    },
+  ];
+
   const items = isLoggedIn ? loggedInItems : loggedOutItems;
 
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import NavItems from "./NavItems";
-import { createSupabaseServerClient } from "@/lib/supabase";
+import { createSupabaseServerClient, isUserPro } from "@/lib/supabase";
 import Image from "next/image";
 
 const Navbar = async () => {
@@ -9,6 +9,8 @@ const Navbar = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const isPro = user ? await isUserPro(user.id) : false;
 
   const displayName =
     user?.user_metadata?.full_name ||
@@ -36,7 +38,7 @@ const Navbar = async () => {
       </Link>
 
       <div className="flex items-center gap-8">
-        <NavItems isLoggedIn={!!user} />
+        <NavItems isLoggedIn={!!user} isPro={isPro} />
 
         {user ? (
           <Link href="/my-journey" className="profile-chip">

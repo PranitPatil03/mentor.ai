@@ -51,7 +51,6 @@ const Profile = async () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <LogoutButton />
           <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit max-md:hidden">
             <div className="flex gap-2 items-center">
               <Image
@@ -100,6 +99,10 @@ const Profile = async () => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+
+      <div className="mt-6 mb-8">
+        <LogoutButton />
       </div>
     </>
   );

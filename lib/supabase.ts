@@ -54,3 +54,29 @@ export const getCurrentSupabaseUser = async () => {
 
   return user;
 };
+
+/** Admin client using service-role key – bypasses RLS. Use only on the server. */
+export const createSupabaseAdminClient = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    throw new Error(
+      "Missing Supabase admin env vars: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  return createClient(url, serviceKey);
+};
+
+/** Check if a user has an active Pro subscription. */
+export const isUserPro = async (userId: string): Promise<boolean> => {
+  const supabase = createSupabaseAdminClient();
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("status")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  return !!data;
+};
