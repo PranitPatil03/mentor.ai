@@ -109,7 +109,7 @@ const MentorsWorkspace = ({
 
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">{mentor.name}</h2>
-                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{mentor.topic}</p>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-3 leading-relaxed">{mentor.topic}</p>
               </div>
 
               <Link

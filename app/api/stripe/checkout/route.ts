@@ -21,9 +21,12 @@ export async function POST() {
     payment_method_types: ["card"],
     customer_email: user.email,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/mentors`,
+    success_url: `${appUrl}/subscription?success=true`,
     cancel_url: `${appUrl}/subscription?canceled=true`,
     metadata: { userId: user.id },
+    subscription_data: {
+      metadata: { userId: user.id },
+    },
   });
 
   return NextResponse.json({ url: session.url });

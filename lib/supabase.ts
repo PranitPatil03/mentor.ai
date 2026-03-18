@@ -67,7 +67,7 @@ export const createSupabaseAdminClient = () => {
   return createClient(url, serviceKey);
 };
 
-/** Check if a user has an active Pro subscription. */
+/** Check if a user has an active Pro subscription via the subscriptions table. */
 export const isUserPro = async (userId: string): Promise<boolean> => {
   try {
     const supabase = createSupabaseAdminClient();
@@ -76,7 +76,7 @@ export const isUserPro = async (userId: string): Promise<boolean> => {
       .from("subscriptions")
       .select("status")
       .eq("user_id", userId)
-      .eq("status", "active")
+      .in("status", ["active", "trialing"])
       .maybeSingle();
     return !!data;
   } catch {

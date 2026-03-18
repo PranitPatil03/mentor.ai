@@ -10,8 +10,9 @@ import {
   getUserCompanions,
   getUserSessions,
 } from "@/lib/actions/companion.action";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const Profile = async () => {
@@ -20,6 +21,7 @@ const Profile = async () => {
 
   const companions = await getUserCompanions(user.id);
   const sessionHistory = await getUserSessions(user.id);
+  const isPro = await isUserPro(user.id);
   const displayName =
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
@@ -45,7 +47,14 @@ const Profile = async () => {
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <h1 className="font-bold text-2xl">{displayName}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-bold text-2xl">{displayName}</h1>
+              {isPro && (
+                <span className="bg-gradient-to-b from-violet-500 to-indigo-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  Pro
+                </span>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
         </div>
@@ -72,6 +81,46 @@ const Profile = async () => {
             <div>Companions Created</div>
           </div>
         </div>
+      </section>
+
+      {/* Subscription status */}
+      <section className="rounded-2xl border border-black/8 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.05)]">
+        {isPro ? (
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-b from-violet-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                ★
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Pro Plan</p>
+                <p className="text-sm text-gray-500">
+                  Unlimited mentors &amp; sessions
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/subscription"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+            >
+              Manage subscription →
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <p className="font-semibold text-gray-900">Free Plan</p>
+              <p className="text-sm text-gray-500">
+                3 mentors · 10 sessions / month
+              </p>
+            </div>
+            <Link
+              href="/subscription"
+              className="bg-gradient-to-b from-violet-500 to-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-xl shadow-[0_2px_10px_rgba(109,40,217,0.35)] hover:scale-[1.02] transition-all"
+            >
+              Upgrade to Pro
+            </Link>
+          </div>
+        )}
       </section>
 
       <div className="my-5">

@@ -1,38 +1,12 @@
-import CompanionCard from "@/components/CompanionCard";
-import SearchInput from "@/components/SearchInput";
-import SubjectFilter from "@/components/SubjectFilter";
-import { getAllCompanions } from "@/lib/actions/companion.action";
-import { getSubjectColor } from "@/lib/utils";
-import React from "react";
+import { redirect } from "next/navigation";
 
-const CompanionsLibraray = async ({ searchParams }: SearchParams) => {
+const CompanionsLibrary = async ({ searchParams }: SearchParams) => {
   const filters = await searchParams;
-  const subject = filters.subject ? filters.subject : "";
-  const topic = filters.topic ? filters.topic : "";
-
-  const companions = await getAllCompanions({ subject, topic });
-
-  return (
-    <>
-      <section className="flex justify-between gap-4 max-sm:flex-col">
-        <h1>AI Mentor Library</h1>
-        <div className="flex gap-4">
-          <SearchInput />
-          <SubjectFilter />
-        </div>
-      </section>
-
-      <section className="companions-grid">
-        {companions.map((companion) => (
-          <CompanionCard
-            key={companion.id}
-            {...companion}
-            color={getSubjectColor(companion.subject)}
-          />
-        ))}
-      </section>
-    </>
-  );
+  const params = new URLSearchParams();
+  params.set("tab", "public");
+  if (filters.subject) params.set("subject", filters.subject);
+  if (filters.topic) params.set("topic", filters.topic);
+  redirect(`/mentors?${params.toString()}`);
 };
 
-export default CompanionsLibraray;
+export default CompanionsLibrary;

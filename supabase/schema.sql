@@ -117,22 +117,34 @@ notify pgrst, 'reload schema';
 -- ────────────────────────────────────────────────
 -- Subscriptions (Stripe Pro status)
 -- ────────────────────────────────────────────────
-create table if not exists public.subscriptions (
+create table if not exists subscriptions (
   user_id uuid primary key references auth.users(id) on delete cascade,
-  stripe_customer_id text,
-  stripe_subscription_id text,
-  status text not null default 'active',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  stripe_customer_id text unique,
+  stripe_subscription_id text unique,
+  stripe_price_id text,
+  status text,
+  current_period_end timestamp with time zone,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
 );
 
-alter table public.subscriptions enable row level security;
+alter table subscriptions enable row level security;
 
-drop policy if exists subscriptions_select_own on public.subscriptions;
-create policy subscriptions_select_own
-  on public.subscriptions
-  for select
-  to authenticated
+create policy "Users can read own subscription"
+  on subscriptions for select
   using (auth.uid() = user_id);
+
+create policy "Users can insert own subscription"
+  on subscriptions for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own subscription"
+  on subscriptions for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create index if not exists subscriptions_user_id_idx on subscriptions(user_id);
+create index if not exists subscriptions_customer_idx on subscriptions(stripe_customer_id);
+create index if not exists subscriptions_subscription_idx on subscriptions(stripe_subscription_id);
 
 notify pgrst, 'reload schema';
