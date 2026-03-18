@@ -43,11 +43,10 @@ const Navbar = async () => {
             <img
               src={profileImage}
               alt={displayName}
-              width={34}
-              height={34}
-              className="h-[34px] w-[34px] rounded-full object-cover"
+              width={36}
+              height={36}
+              className="h-[36px] w-[36px] rounded-full object-cover"
             />
-            <span>Profile</span>
           </Link>
         ) : (
           <Link href="/sign-in" className="btn-signin">

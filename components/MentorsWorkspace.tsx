@@ -92,25 +92,32 @@ const MentorsWorkspace = ({
           {orderedMentors.map((mentor) => (
             <article
               key={mentor.id}
-              className="companion-card"
-              style={{ backgroundColor: getSubjectColor(mentor.subject) }}
+              className="flex flex-col rounded-2xl border border-black/8 bg-white p-5 gap-4 w-full justify-between shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] transition-all"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="subject-badge">{mentor.subject}</span>
-                <p className="text-xs text-gray-700">{mentor.duration} min</p>
-              </div>
-
-              <h2 className="text-2xl font-bold text-gray-900">{mentor.name}</h2>
-              <p className="text-sm text-gray-700 line-clamp-3">{mentor.topic}</p>
-
-              <div className="mt-3 flex gap-2">
-                <Link
-                  href={`/mentors/${mentor.id}`}
-                  className="btn-primary w-full justify-center"
+                <span
+                  className="text-xs font-semibold px-3 py-1 rounded-full capitalize tracking-wide"
+                  style={{
+                    backgroundColor: getSubjectColor(mentor.subject),
+                    color: '#1a1a2e',
+                  }}
                 >
-                  Open Mentor
-                </Link>
+                  {mentor.subject}
+                </span>
+                <p className="text-xs text-gray-400 font-medium">{mentor.duration} min</p>
               </div>
+
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">{mentor.name}</h2>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{mentor.topic}</p>
+              </div>
+
+              <Link
+                href={`/mentors/${mentor.id}`}
+                className="btn-primary w-full justify-center"
+              >
+                Open Mentor
+              </Link>
             </article>
           ))}
         </section>

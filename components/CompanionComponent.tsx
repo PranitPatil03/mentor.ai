@@ -100,8 +100,8 @@ const CompanionComponent = ({
   };
 
   return (
-    <section className="flex flex-col h-[100vh]">
-      <section className="flex gap-8 max-sm:flex-col">
+    <section className="flex flex-col h-[calc(100vh-160px)]">
+      <section className="flex gap-5 max-sm:flex-col">
         {/* COMPANION DISPLAY */}
         <div className="companion-section">
           <div
@@ -116,7 +116,7 @@ const CompanionComponent = ({
                   ? "opacity-1001"
                   : "opacity-0",
                 callStatus === CallStatus.CONNECTING &&
-                  "opacity-100 animate-pulse"
+                "opacity-100 animate-pulse"
               )}
             >
               <Image
@@ -146,15 +146,15 @@ const CompanionComponent = ({
 
         {/* USER_SECTION, MIC BUTTON, START BUTTON */}
         <div className="flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row">
-          <div className="border-2 border-black flex flex-col gap-4 items-center rounded-lg py-8 max-sm:hidden">
+          <div className="border border-black/10 bg-white rounded-2xl flex flex-col gap-4 items-center py-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] max-sm:hidden">
             <img
               src={userImage}
               alt={userName}
-              width={130}
-              height={130}
-              className="rounded-lg"
+              width={100}
+              height={100}
+              className="rounded-xl"
             />
-            <p className="font-bold text-2xl">{userName}</p>
+            <p className="font-semibold text-lg">{userName}</p>
           </div>
 
           {/* MIC-BUTTON */}
@@ -166,10 +166,10 @@ const CompanionComponent = ({
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
-              width={36}
-              height={36}
+              width={32}
+              height={32}
             />
-            <p className="max-sm:hidden">
+            <p className="max-sm:hidden text-sm text-gray-600">
               {isMuted ? "Turn on microphone" : "Turn off microphone"}
             </p>
           </button>
@@ -177,8 +177,10 @@ const CompanionComponent = ({
           {/* START SESSION BUTTON */}
           <button
             className={cn(
-              "rounded-lg py-2 cursor-pointer transition-colors w-full text-white",
-              callStatus === CallStatus.ACTIVE ? "bg-red-700" : "bg-primary",
+              "rounded-xl py-3 cursor-pointer transition-all duration-200 w-full font-medium text-sm",
+              callStatus === CallStatus.ACTIVE
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)]",
               callStatus === CallStatus.CONNECTING && "animate-pulse"
             )}
             onClick={
@@ -188,8 +190,8 @@ const CompanionComponent = ({
             {callStatus === CallStatus.ACTIVE
               ? "End Session"
               : callStatus === CallStatus.CONNECTING
-              ? "Connecting"
-              : "Start Session"}
+                ? "Connecting..."
+                : "Start Session"}
           </button>
         </div>
       </section>

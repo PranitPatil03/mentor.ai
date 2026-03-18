@@ -92,14 +92,7 @@ const CompanionForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-5"
       >
-        <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">
-            AI Mentor Setup
-          </p>
-          <p className="text-sm text-gray-600">Configure your mentor profile and launch the first session.</p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <FormField
             control={form.control}
             name="name"
@@ -150,28 +143,7 @@ const CompanionForm = () => {
               </FormItem>
             )}
           />
-        </div>
 
-        {/* topic */}
-        <FormField
-          control={form.control}
-          name="topic"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>What should this mentor teach?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Ex. Probability fundamentals and exam prep"
-                  {...field}
-                  className="input"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid gap-4 md:grid-cols-3">
           <FormField
             control={form.control}
             name="voice"
@@ -197,7 +169,28 @@ const CompanionForm = () => {
               </FormItem>
             )}
           />
+        </div>
 
+        {/* topic */}
+        <FormField
+          control={form.control}
+          name="topic"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>What should this mentor teach?</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Ex. Probability fundamentals and exam prep"
+                  {...field}
+                  className="input"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid gap-4 md:grid-cols-3">
           <FormField
             control={form.control}
             name="style"
@@ -242,10 +235,16 @@ const CompanionForm = () => {
               </FormItem>
             )}
           />
+
+          <div className="flex items-end">
+            <Button
+              type="submit"
+              className="w-full cursor-pointer bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] transition-all duration-200"
+            >
+              {form.formState.isSubmitting ? "Creating..." : "Create AI Mentor"}
+            </Button>
+          </div>
         </div>
-        <Button type="submit" className="w-full cursor-pointer">
-          {form.formState.isSubmitting ? "Creating Mentor..." : "Create AI Mentor"}
-        </Button>
         {form.formState.errors.root?.message ? (
           <p className="text-sm text-red-600 text-center">
             {form.formState.errors.root.message}
