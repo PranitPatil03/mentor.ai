@@ -49,7 +49,6 @@ const formSchema = z.object({
 const CompanionForm = () => {
   const router = useRouter();
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,7 +61,6 @@ const CompanionForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const companion = await createCompanion(values);

@@ -156,7 +156,7 @@ body {
 @layer components {
   .landing-page-shell {
     @apply relative flex flex-col gap-0 overflow-x-hidden;
-    background: linear-gradient(165deg, #fcfbff 0%, #f6f2ff 28%, #f7f5ff 54%, #fdfdff 100%);
+    background: #fff;
   }
   .home-section {
     @apply flex gap-4 justify-between items-start w-full max-lg:flex-col-reverse max-lg:items-center;
@@ -239,13 +239,13 @@ body {
   /* ── Landing Page ── */
   .hero-section {
     @apply relative flex flex-col items-center text-center pt-32 md:pt-40 pb-20 px-4 gap-6 overflow-hidden;
-    background: transparent;
+    background: #fff;
   }
   .hero-badge {
     @apply bg-purple-100 text-purple-700 border border-purple-200 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest;
   }
   .hero-headline {
-    @apply text-6xl max-sm:text-4xl font-light tracking-tight text-gray-900 leading-[1.1];
+    @apply text-5xl max-sm:text-3xl font-normal tracking-tight text-gray-900 leading-[1.1];
   }
   .hero-gradient-text {
     @apply bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent;
@@ -364,7 +364,7 @@ body {
     @apply pointer-events-none absolute -top-10 -right-10 size-44 rounded-full bg-violet-100/80 blur-2xl;
   }
   .pricing-section-landing {
-    @apply py-16 px-2 bg-transparent;
+    @apply py-16 px-2 bg-white;
   }
   .pricing-cta-banner {
     @apply bg-white/70 backdrop-blur-sm rounded-3xl px-12 py-16 text-center w-full;

@@ -101,92 +101,10 @@ const CompanionComponent = ({
 
   return (
     <section className="flex flex-col h-[calc(100vh-180px)]">
-      {/* Top bar: companion display + controls */}
-      <section className="flex gap-4 max-sm:flex-col">
-        {/* COMPANION DISPLAY */}
-        <div className="companion-section">
-          <div
-            className="companion-avatar"
-            style={{ backgroundColor: getSubjectColor(subject) }}
-          >
-            <div
-              className={cn(
-                "absolute transition-opacity duration-1000",
-                callStatus === CallStatus.FINISHED ||
-                  callStatus === CallStatus.INACTIVE
-                  ? "opacity-1001"
-                  : "opacity-0",
-                callStatus === CallStatus.CONNECTING &&
-                "opacity-100 animate-pulse"
-              )}
-            >
-              <Image
-                src={`/icons/${subject}.svg`}
-                alt={subject}
-                width={100}
-                height={100}
-                className="max-sm:w-fit"
-              />
-            </div>
-            <div
-              className={cn(
-                "absolute transition-opacity duration-1000",
-                callStatus === CallStatus.ACTIVE ? "opacity-100" : "opacity-0"
-              )}
-            >
-              <Lottie
-                lottieRef={lottieRef}
-                animationData={soundwaves}
-                autoplay={false}
-                className="companion-lottie"
-              />
-            </div>
-          </div>
-          <p className="font-semibold text-lg">{name}</p>
-        </div>
-
-        {/* CONTROLS: mic toggle + start/end */}
-        <div className="flex flex-col gap-3 w-[280px] max-sm:w-full justify-center">
-          <button
-            className="btn-mic"
-            onClick={toggleMicrophone}
-            disabled={callStatus !== CallStatus.ACTIVE}
-          >
-            <Image
-              src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
-              alt="mic"
-              width={20}
-              height={20}
-            />
-            <span className="text-gray-700">
-              {isMuted ? "Unmute" : "Mute"}
-            </span>
-          </button>
-
-          <button
-            className={cn(
-              "rounded-xl py-3 cursor-pointer transition-all duration-200 w-full font-medium text-sm",
-              callStatus === CallStatus.ACTIVE
-                ? "bg-red-600 hover:bg-red-700 text-white"
-                : "bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)]",
-              callStatus === CallStatus.CONNECTING && "animate-pulse"
-            )}
-            onClick={
-              callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall
-            }
-          >
-            {callStatus === CallStatus.ACTIVE
-              ? "End Session"
-              : callStatus === CallStatus.CONNECTING
-                ? "Connecting..."
-                : "Start Session"}
-          </button>
-        </div>
-      </section>
-
-      {/* TRANSCRIPT — messages flow top to bottom */}
-      <section className="transcript">
-        <div className="transcript-message no-scrollbar">
+      {/* Main card: show chat, not mentor icon */}
+      <section className="flex flex-col flex-1 rounded-2xl border border-black/8 bg-white p-6 gap-4 justify-between items-center">
+        {/* Chat transcript (scrollable) */}
+        <div className="transcript-message no-scrollbar flex-1 w-full overflow-y-auto">
           {messages.map((message, index) => {
             if (message.role === "assistant") {
               return (
@@ -211,8 +129,44 @@ const CompanionComponent = ({
             }
           })}
         </div>
-
         <div className="transcript-fade" />
+        {/* Chat input area with speaker/tutor icon */}
+        <div className="flex items-center gap-3 w-full mt-4">
+          <button
+            className="btn-mic"
+            onClick={toggleMicrophone}
+            disabled={callStatus !== CallStatus.ACTIVE}
+          >
+            <Image
+              src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
+              alt="mic"
+              width={24}
+              height={24}
+            />
+          </button>
+          {/* Add input or controls here as needed */}
+        </div>
+      </section>
+      {/* Session controls below card */}
+      <section className="flex flex-row gap-3 w-full justify-center mt-4">
+        <button
+          className={cn(
+            "rounded-xl py-3 cursor-pointer transition-all duration-200 w-full font-medium text-sm",
+            callStatus === CallStatus.ACTIVE
+              ? "bg-red-600 hover:bg-red-700 text-white"
+              : "bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)]",
+            callStatus === CallStatus.CONNECTING && "animate-pulse"
+          )}
+          onClick={
+            callStatus === CallStatus.ACTIVE ? handleDisconnect : handleCall
+          }
+        >
+          {callStatus === CallStatus.ACTIVE
+            ? "End Session"
+            : callStatus === CallStatus.CONNECTING
+              ? "Connecting..."
+              : "Start Session"}
+        </button>
       </section>
     </section>
   );
