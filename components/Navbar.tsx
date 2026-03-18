@@ -2,34 +2,29 @@ import Link from "next/link";
 import React from "react";
 import NavItems from "./NavItems";
 import { createSupabaseServerClient } from "@/lib/supabase";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import Image from "next/image";
 
 const Navbar = async () => {
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") ?? "";
-
-  if (pathname.startsWith("/sign-in") || pathname.startsWith("/auth")) {
-    return null;
-  }
-
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const signOut = async () => {
-    "use server";
+  const displayName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    "Profile";
 
-    const serverSupabase = await createSupabaseServerClient();
-    await serverSupabase.auth.signOut();
-    redirect("/");
-  };
+  const profileImage =
+    (user?.user_metadata?.avatar_url as string | undefined) ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      displayName
+    )}&background=F4F4F5&color=18181B&bold=true`;
 
   return (
     <nav className="navbar">
-      <Link href="/" className="flex items-center gap-2.5 select-none">
+      <Link href="/" className="flex items-center gap-1.5 select-none">
         <Image
           src="/images/logo.png"
           alt="mentor.ai logo"
@@ -41,14 +36,19 @@ const Navbar = async () => {
       </Link>
 
       <div className="flex items-center gap-8">
-        <NavItems />
+        <NavItems isLoggedIn={!!user} />
 
         {user ? (
-          <form action={signOut}>
-            <button type="submit" className="btn-signin">
-              Sign Out
-            </button>
-          </form>
+          <Link href="/my-journey" className="profile-chip">
+            <img
+              src={profileImage}
+              alt={displayName}
+              width={34}
+              height={34}
+              className="h-[34px] w-[34px] rounded-full object-cover"
+            />
+            <span>Profile</span>
+          </Link>
         ) : (
           <Link href="/sign-in" className="btn-signin">
             Sign In

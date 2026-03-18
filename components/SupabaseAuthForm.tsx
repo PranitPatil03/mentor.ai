@@ -91,7 +91,6 @@ const SupabaseAuthForm = () => {
 
   return (
     <article className="w-full max-w-[420px] text-center mx-auto">
-      <p className="text-3xl font-medium text-gray-900 mb-3">mentor.ai</p>
       <h1 className="text-4xl font-semibold tracking-tight text-gray-900 mb-2">
         {mode === "sign-in" ? "Login to your account" : "Create an Account"}
       </h1>

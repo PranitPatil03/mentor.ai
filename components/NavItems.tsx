@@ -4,20 +4,39 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const navItems = [
+const loggedInItems = [
   {
     label: "AI Mentors",
     href: "/mentors",
     activePaths: ["/mentors", "/companions", "/create-mentor"],
   },
-  { label: "Pricing", href: "/subscription", activePaths: ["/subscription"] },
+  {
+    label: "Upgrade to Pro",
+    href: "/subscription",
+    activePaths: ["/subscription"],
+  },
 ];
 
-const NavItems = () => {
+const loggedOutItems = [
+  {
+    label: "AI Mentors",
+    href: "/mentors",
+    activePaths: ["/mentors", "/companions", "/create-mentor"],
+  },
+  {
+    label: "Pricing",
+    href: "/subscription",
+    activePaths: ["/subscription"],
+  },
+];
+
+const NavItems = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const pathname = usePathname();
+  const items = isLoggedIn ? loggedInItems : loggedOutItems;
+
   return (
     <nav className="flex items-center text-sm font-medium gap-5">
-      {navItems.map(({ label, href, activePaths }) => (
+      {items.map(({ label, href, activePaths }) => (
         <Link
           href={href}
           key={label}

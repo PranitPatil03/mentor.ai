@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import CompanionForm from "@/components/CompanionForm";
 import UpgradeToProButton from "@/components/UpgradeToProButton";
@@ -66,14 +65,9 @@ const MentorsWorkspace = ({
       </header>
 
       {orderedMentors.length === 0 ? (
-        <article className="rounded-2xl border border-white/80 bg-white/90 shadow-[0_8px_24px_rgba(15,23,42,0.08)] p-6 md:p-10 text-center flex flex-col items-center gap-4">
-          <div className="size-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center">
-            <Image src="/icons/cap.svg" alt="Mentors" width={28} height={28} />
-          </div>
-
-          <h2 className="text-2xl font-semibold text-gray-900">No mentors yet</h2>
+        <article className="rounded-3xl border-2 border-dashed border-black/15 bg-transparent p-8 md:p-12 text-center flex flex-col items-center gap-4">
           <p className="max-w-xl text-sm md:text-base text-gray-600">
-            Create your first AI mentor to start personalized sessions and build your learning track.
+            Create your first AI mentor to start personalized sessions
           </p>
 
           {canCreateMentor ? (
@@ -131,20 +125,20 @@ const MentorsWorkspace = ({
             className="absolute inset-0 bg-black/35 backdrop-blur-[1.5px]"
           />
 
-          <div className="relative z-10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl border border-white/80 bg-[#fbfbff] p-4 md:p-6 shadow-[0_20px_60px_rgba(15,23,42,0.28)]">
-            <div className="flex items-center justify-between mb-4">
+          <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[28px] border border-black/10 bg-white p-5 md:p-6 shadow-[0_20px_60px_rgba(15,23,42,0.22)]">
+            <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">
                   Add New Mentor
                 </p>
-                <h2 className="text-2xl font-semibold text-gray-900 mt-1">
-                  Configure your mentor profile
+                <h2 className="text-xl font-semibold text-gray-900 mt-1">
+                  Configure your mentor
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="h-9 w-9 rounded-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                className="h-9 w-9 rounded-full border border-black/10 bg-white text-gray-700 hover:bg-gray-50"
               >
                 x
               </button>

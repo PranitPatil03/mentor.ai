@@ -1,9 +1,8 @@
-import CompanionsList from "@/components/CompanionsList";
 import PricingCards from "@/app/subscription/PricingCards";
-import { getRecentSessions } from "@/lib/actions/companion.action";
 import { PLANS } from "@/lib/stripe";
 import { getCurrentSupabaseUser } from "@/lib/supabase";
 import { subjectsColors } from "@/constants";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 
@@ -107,7 +106,9 @@ const FEATURES = [
 
 const Page = async () => {
   const user = await getCurrentSupabaseUser();
-  const recentSessionsCompanions = await getRecentSessions(10);
+
+  // Logged-in users should go straight to their dashboard
+  if (user) redirect("/mentors");
 
   return (
     <div className="landing-page-shell">
@@ -129,15 +130,9 @@ const Page = async () => {
           </p>
 
           <div className="flex items-center gap-4 flex-wrap justify-center">
-            {user ? (
-              <Link href="/companions/new" className="hero-cta-primary">
-                + Build New Companion
-              </Link>
-            ) : (
-              <Link href="/sign-in" className="hero-cta-primary">
-                Start for Free
-              </Link>
-            )}
+            <Link href="/sign-in" className="hero-cta-primary">
+              Start for Free
+            </Link>
           </div>
 
           <div className="flex items-center gap-6 mt-2 text-sm text-gray-400">
@@ -194,10 +189,8 @@ const Page = async () => {
 
               <p className="text-xs text-gray-600 font-medium">{c.duration} min session</p>
 
-              <Link href="/sign-in" className="w-full">
-                <button className="btn-primary w-full justify-center">
-                  Start Session
-                </button>
+              <Link href="/sign-in" className="hero-cta-primary w-full text-center">
+                Start Session
               </Link>
             </article>
           ))}
@@ -215,39 +208,26 @@ const Page = async () => {
           </p>
         </div>
 
-        <PricingCards plans={PLANS} isLoggedIn={!!user} />
+        <PricingCards plans={PLANS} isLoggedIn={false} />
       </section>
 
-      {/* ── Recent Sessions (logged-in only) ── */}
-      {user && recentSessionsCompanions.length > 0 && (
-        <section className="py-8 px-2">
-          <CompanionsList
-            title="Recently completed sessions"
-            companions={recentSessionsCompanions}
-            classNames="w-2/3 max-lg:w-full"
-          />
-        </section>
-      )}
-
       {/* ── Pricing CTA ── */}
-      {!user && (
-        <section className="py-16 px-2">
-          <div className="pricing-cta-banner">
-            <h2 className="text-4xl md:text-5xl tracking-tight text-gray-900 mb-4">
-              Ready to transform how you learn?
-            </h2>
-            <p className="text-gray-500 mb-8 max-w-lg mx-auto">
-              Thousands of learners have already built their personal AI tutors.
-              Start free — upgrade when you&apos;re ready.
-            </p>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <Link href="/sign-in" className="hero-cta-primary">
-                Start for Free
-              </Link>
-            </div>
+      <section className="py-16 px-2">
+        <div className="pricing-cta-banner">
+          <h2 className="text-4xl md:text-5xl tracking-tight text-gray-900 mb-4">
+            Ready to transform how you learn?
+          </h2>
+          <p className="text-gray-500 mb-8 max-w-lg mx-auto">
+            Thousands of learners have already built their personal AI tutors.
+            Start free — upgrade when you&apos;re ready.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Link href="/sign-in" className="hero-cta-primary">
+              Start for Free
+            </Link>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </div>
   );
 };
