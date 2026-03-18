@@ -61,9 +61,7 @@ export const createSupabaseAdminClient = () => {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
-    throw new Error(
-      "Missing Supabase admin env vars: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
-    );
+    return null;
   }
 
   return createClient(url, serviceKey);
@@ -71,12 +69,17 @@ export const createSupabaseAdminClient = () => {
 
 /** Check if a user has an active Pro subscription. */
 export const isUserPro = async (userId: string): Promise<boolean> => {
-  const supabase = createSupabaseAdminClient();
-  const { data } = await supabase
-    .from("subscriptions")
-    .select("status")
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .maybeSingle();
-  return !!data;
+  try {
+    const supabase = createSupabaseAdminClient();
+    if (!supabase) return false;
+    const { data } = await supabase
+      .from("subscriptions")
+      .select("status")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .maybeSingle();
+    return !!data;
+  } catch {
+    return false;
+  }
 };

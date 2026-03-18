@@ -22,6 +22,9 @@ export async function POST(req: Request) {
   }
 
   const supabase = createSupabaseAdminClient();
+  if (!supabase) {
+    return NextResponse.json({ error: "Missing service role key" }, { status: 500 });
+  }
 
   switch (event.type) {
     case "checkout.session.completed": {
