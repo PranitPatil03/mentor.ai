@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
   const user = await getCurrentSupabaseUser();
-  if (user) redirect("/");
+  if (user) redirect("/mentors");
 
   return (
     <section className="flex w-full min-h-[80vh] items-center justify-center py-10">

@@ -9,7 +9,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Converso",
+  title: "mentor.ai | your ai mentors",
   description: "Real-time AI Teaching Platform",
 };
 

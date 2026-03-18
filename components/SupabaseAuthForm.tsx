@@ -9,6 +9,7 @@ type Mode = "sign-in" | "sign-up";
 const SupabaseAuthForm = () => {
   const router = useRouter();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const postAuthPath = "/mentors";
 
   const [mode, setMode] = useState<Mode>("sign-in");
   const [fullName, setFullName] = useState("");
@@ -38,7 +39,7 @@ const SupabaseAuthForm = () => {
         return;
       }
 
-      router.push("/");
+      router.push(postAuthPath);
       router.refresh();
       setLoading(false);
       return;
@@ -61,7 +62,7 @@ const SupabaseAuthForm = () => {
     }
 
     if (data.session) {
-      router.push("/");
+      router.push(postAuthPath);
       router.refresh();
       setLoading(false);
       return;
@@ -79,7 +80,7 @@ const SupabaseAuthForm = () => {
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(postAuthPath)}`,
       },
     });
     if (oauthError) {

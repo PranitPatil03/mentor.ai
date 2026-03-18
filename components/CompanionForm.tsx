@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,7 +23,7 @@ import {
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
 import { createCompanion } from "@/lib/actions/companion.action";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -48,6 +47,8 @@ const formSchema = z.object({
 });
 
 const CompanionForm = () => {
+  const router = useRouter();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,18 +67,20 @@ const CompanionForm = () => {
     try {
       const companion = await createCompanion(values);
 
-      if (companion) {
-        redirect(`/companions/${companion.id}`);
+      if (!companion?.id) {
+        form.setError("root", {
+          message: "Failed to create mentor. Please try again.",
+        });
+        return;
       }
 
-      form.setError("root", {
-        message: "Failed to create companion. Please try again.",
-      });
+      router.push(`/mentors/${companion.id}`);
+      router.refresh();
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : "Failed to create companion. Please try again.";
+          : "Failed to create mentor. Please try again.";
 
       form.setError("root", { message });
     }
@@ -85,17 +88,30 @@ const CompanionForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 rounded-2xl border border-white/80 bg-white/90 p-5 md:p-7 shadow-[0_8px_24px_rgba(99,102,241,0.08)]"
+      >
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">
+            AI Mentor Setup
+          </p>
+          <h2 className="text-2xl font-semibold text-gray-900">Build your AI mentor</h2>
+          <p className="text-sm text-gray-600">
+            Configure a mentor personality, voice, and session plan for your learners.
+          </p>
+        </div>
+
         {/* companion name */}
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion name</FormLabel>
+              <FormLabel>AI mentor name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter the companion name"
+                  placeholder="Ex. Algebra Coach"
                   {...field}
                   className="input"
                 />
@@ -145,10 +161,10 @@ const CompanionForm = () => {
           name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>What should the companion help with?</FormLabel>
+              <FormLabel>What should this mentor teach?</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Ex. Probability"
+                  placeholder="Ex. Probability fundamentals and exam prep"
                   {...field}
                   className="input"
                 />
@@ -232,7 +248,7 @@ const CompanionForm = () => {
           )}
         />
         <Button type="submit" className="w-full cursor-pointer">
-          Build Your Companion
+          {form.formState.isSubmitting ? "Creating Mentor..." : "Create AI Mentor"}
         </Button>
         {form.formState.errors.root?.message ? (
           <p className="text-sm text-red-600 text-center">
