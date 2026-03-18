@@ -24,7 +24,7 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
   return (
     <>
-      <article className="flex rounded-2xl border border-black/8 bg-white justify-between items-center p-4 shadow-sm">
+      <article className="flex items-center justify-between rounded-2xl border border-black/8 bg-transparent p-4">
         <div className="flex items-center gap-3">
           <div
             className="size-[44px] flex items-center justify-center rounded-xl max-md:hidden"
@@ -43,10 +43,14 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
               <p className="font-semibold text-base">{name}</p>
               <span className="text-xs px-2 py-0.5 rounded-full capitalize bg-gray-100 text-gray-600">{subject}</span>
             </div>
-            <p className="text-sm text-gray-500">{topic}</p>
+            <p className="text-sm text-gray-500">
+              {topic}
+              <span className="ml-2 font-medium text-gray-400 md:hidden">{duration} min</span>
+            </p>
           </div>
         </div>
-        <p className="text-sm text-gray-400 font-medium max-md:hidden">
+
+        <p className="hidden text-sm font-medium tracking-tight text-gray-500 md:block">
           {duration} min
         </p>
       </article>

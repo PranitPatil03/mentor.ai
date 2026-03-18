@@ -1,4 +1,5 @@
 import CompanionsList from "@/components/CompanionsList";
+import LogoutButton from "@/components/LogoutButton";
 import {
   Accordion,
   AccordionContent,
@@ -49,8 +50,9 @@ const Profile = async () => {
           </div>
         </div>
 
-        <div className="flex gap-4 max-md:hidden">
-          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
+        <div className="flex items-center gap-4">
+          <LogoutButton />
+          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit max-md:hidden">
             <div className="flex gap-2 items-center">
               <Image
                 src="/icons/check.svg"
@@ -63,7 +65,7 @@ const Profile = async () => {
             <div>Lessons Completed</div>
           </div>
 
-          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
+          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit max-md:hidden">
             <div className="flex gap-2 items-center">
               <Image src="/icons/cap.svg" alt="cap" width={22} height={22} />
               <p className="text-2xl font-bold">{companions.length}</p>

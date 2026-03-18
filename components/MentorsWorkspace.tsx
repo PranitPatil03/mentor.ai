@@ -53,7 +53,7 @@ const MentorsWorkspace = ({
           <button
             type="button"
             onClick={() => setIsCreateOpen(true)}
-            className="btn-primary"
+            className="btn-signin"
           >
             + Create Mentor
           </button>
@@ -74,7 +74,7 @@ const MentorsWorkspace = ({
             <button
               type="button"
               onClick={() => setIsCreateOpen(true)}
-              className="btn-primary"
+              className="btn-signin"
             >
               Create Mentor
             </button>
@@ -114,7 +114,7 @@ const MentorsWorkspace = ({
 
               <Link
                 href={`/mentors/${mentor.id}`}
-                className="hero-cta-primary w-full text-center text-sm h-10"
+                className="hero-cta-primary w-1/2 text-center text-sm h-10"
               >
                 Open Mentor
               </Link>
@@ -132,7 +132,7 @@ const MentorsWorkspace = ({
             className="absolute inset-0 bg-black/35 backdrop-blur-[1.5px]"
           />
 
-          <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[28px] border border-black/10 bg-white p-5 md:p-6 shadow-[0_20px_60px_rgba(15,23,42,0.22)]">
+          <div className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[28px] border border-black/10 bg-white p-5 md:p-6 shadow-[0_20px_60px_rgba(15,23,42,0.22)]">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">

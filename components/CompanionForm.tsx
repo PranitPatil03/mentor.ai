@@ -90,7 +90,7 @@ const CompanionForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-5"
       >
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <FormField
             control={form.control}
             name="name"
@@ -188,7 +188,7 @@ const CompanionForm = () => {
           )}
         />
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
           <FormField
             control={form.control}
             name="style"
