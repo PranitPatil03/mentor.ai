@@ -42,7 +42,7 @@ const UpgradeToProButton = ({ className = "" }: { className?: string }) => {
         type="button"
         onClick={handleUpgrade}
         disabled={loading}
-        className={`btn-primary w-full justify-center disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+        className={`hero-cta-primary w-full text-center text-sm h-10 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
       >
         {loading ? "Redirecting to Stripe..." : "Upgrade to Pro"}
       </button>

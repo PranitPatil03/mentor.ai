@@ -100,8 +100,9 @@ const CompanionComponent = ({
   };
 
   return (
-    <section className="flex flex-col h-[calc(100vh-160px)]">
-      <section className="flex gap-5 max-sm:flex-col">
+    <section className="flex flex-col h-[calc(100vh-180px)]">
+      {/* Top bar: companion display + controls */}
+      <section className="flex gap-4 max-sm:flex-col">
         {/* COMPANION DISPLAY */}
         <div className="companion-section">
           <div
@@ -122,8 +123,8 @@ const CompanionComponent = ({
               <Image
                 src={`/icons/${subject}.svg`}
                 alt={subject}
-                width={150}
-                height={150}
+                width={100}
+                height={100}
                 className="max-sm:w-fit"
               />
             </div>
@@ -141,23 +142,11 @@ const CompanionComponent = ({
               />
             </div>
           </div>
-          <p className="font-bold text-2xl">{name}</p>
+          <p className="font-semibold text-lg">{name}</p>
         </div>
 
-        {/* USER_SECTION, MIC BUTTON, START BUTTON */}
-        <div className="flex flex-col gap-4 w-1/3 max-sm:w-full max-sm:flex-row">
-          <div className="border border-black/10 bg-white rounded-2xl flex flex-col gap-4 items-center py-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] max-sm:hidden">
-            <img
-              src={userImage}
-              alt={userName}
-              width={100}
-              height={100}
-              className="rounded-xl"
-            />
-            <p className="font-semibold text-lg">{userName}</p>
-          </div>
-
-          {/* MIC-BUTTON */}
+        {/* CONTROLS: mic toggle + start/end */}
+        <div className="flex flex-col gap-3 w-[280px] max-sm:w-full justify-center">
           <button
             className="btn-mic"
             onClick={toggleMicrophone}
@@ -166,15 +155,14 @@ const CompanionComponent = ({
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
-              width={32}
-              height={32}
+              width={20}
+              height={20}
             />
-            <p className="max-sm:hidden text-sm text-gray-600">
-              {isMuted ? "Turn on microphone" : "Turn off microphone"}
-            </p>
+            <span className="text-gray-700">
+              {isMuted ? "Unmute" : "Mute"}
+            </span>
           </button>
 
-          {/* START SESSION BUTTON */}
           <button
             className={cn(
               "rounded-xl py-3 cursor-pointer transition-all duration-200 w-full font-medium text-sm",
@@ -196,28 +184,29 @@ const CompanionComponent = ({
         </div>
       </section>
 
-      {/* TRANSCRIPT */}
-      <section className="relative flex flex-col gap-4 w-full items-center pt-10 flex-grow overflow-hidden">
-        <div className="overflow-y-auto w-full flex flex-col gap-4 max-sm:gap-2 pr-2 h-full text-2xl no-scrollbar">
+      {/* TRANSCRIPT — messages flow top to bottom */}
+      <section className="transcript">
+        <div className="transcript-message no-scrollbar">
           {messages.map((message, index) => {
             if (message.role === "assistant") {
               return (
-                <p key={index} className="max-sm:text-sm mb-1 text-left">
-                  <span className="font-semibold">
-                    {name.split(" ")[0].replace("/[.,]/g, ", "")}:
-                  </span>{" "}
-                  {message.content}
-                </p>
+                <div key={index} className="flex justify-start">
+                  <div className="max-w-[75%] rounded-2xl rounded-tl-md bg-gray-50 border border-black/6 px-4 py-3">
+                    <p className="text-xs font-semibold text-gray-400 mb-0.5">
+                      {name.split(" ")[0].replace(/[.,]/g, "")}
+                    </p>
+                    <p className="text-gray-900 text-[15px] leading-relaxed">{message.content}</p>
+                  </div>
+                </div>
               );
             } else {
               return (
-                <p
-                  key={index}
-                  className="text-primary text-right mb-1 max-sm:text-sm"
-                >
-                  <span className="font-semibold">{userName}:</span>{" "}
-                  {message.content}
-                </p>
+                <div key={index} className="flex justify-end">
+                  <div className="max-w-[75%] rounded-2xl rounded-tr-md bg-gradient-to-b from-violet-500 to-indigo-600 px-4 py-3">
+                    <p className="text-xs font-semibold text-white/60 mb-0.5">{userName}</p>
+                    <p className="text-white text-[15px] leading-relaxed">{message.content}</p>
+                  </div>
+                </div>
               );
             }
           })}

@@ -24,31 +24,31 @@ const CompanionSession = async ({ params }: CompanionSessionPageProps) => {
 
   return (
     <>
-      <article className="flex rounded-border justify-between items-center p-5 max-md:flex-col max-md:items-start max-md:gap-3">
+      <article className="flex rounded-2xl border border-black/8 bg-white justify-between items-center p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div
-            className="size-[56px] flex items-center justify-center rounded-xl max-md:hidden"
+            className="size-[44px] flex items-center justify-center rounded-xl max-md:hidden"
             style={{ backgroundColor: getSubjectColor(subject) }}
           >
             <Image
               src={`/icons/${subject}.svg`}
               alt={subject}
-              width={28}
-              height={28}
+              width={22}
+              height={22}
             />
           </div>
 
-          <div className="flex flex-col gap-0.5">
+          <div>
             <div className="flex items-center gap-2">
-              <p className="font-semibold text-lg">{name}</p>
-              <div className="subject-badge max-sm:hidden">{subject}</div>
+              <p className="font-semibold text-base">{name}</p>
+              <span className="text-xs px-2 py-0.5 rounded-full capitalize bg-gray-100 text-gray-600">{subject}</span>
             </div>
-            <p className="text-sm text-gray-600">{topic}</p>
+            <p className="text-sm text-gray-500">{topic}</p>
           </div>
         </div>
-        <div className="text-sm font-medium text-gray-500 max-md:hidden">
-          {duration} minutes
-        </div>
+        <p className="text-sm text-gray-400 font-medium max-md:hidden">
+          {duration} min
+        </p>
       </article>
 
       <CompanionComponent

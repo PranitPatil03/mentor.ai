@@ -114,7 +114,7 @@ const MentorsWorkspace = ({
 
               <Link
                 href={`/mentors/${mentor.id}`}
-                className="btn-primary w-full justify-center"
+                className="hero-cta-primary w-full text-center text-sm h-10"
               >
                 Open Mentor
               </Link>
