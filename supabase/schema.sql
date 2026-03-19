@@ -24,7 +24,7 @@ create table if not exists public.bookmarks (
 
 create table if not exists public.session_history (
   id uuid primary key default gen_random_uuid(),
-  companion_id uuid not null references public.companions(id) on delete cascade,
+  companion_id uuid not null,
   user_id uuid not null references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
@@ -148,3 +148,10 @@ create index if not exists subscriptions_customer_idx on subscriptions(stripe_cu
 create index if not exists subscriptions_subscription_idx on subscriptions(stripe_subscription_id);
 
 notify pgrst, 'reload schema';
+
+-- ────────────────────────────────────────────────
+-- MIGRATION: Drop FK on session_history.companion_id
+-- (allows storing default companion UUIDs that don't exist in companions table)
+-- Run this if you already created the table with the FK:
+-- ────────────────────────────────────────────────
+-- ALTER TABLE public.session_history DROP CONSTRAINT IF EXISTS session_history_companion_id_fkey;

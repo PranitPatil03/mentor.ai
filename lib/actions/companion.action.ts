@@ -4,6 +4,7 @@ import {
   getCurrentSupabaseUser,
   isUserPro,
 } from "../supabase";
+import { DEFAULT_COMPANIONS, DEFAULT_COMPANION_IDS } from "@/constants";
 import { revalidatePath } from "next/cache";
 
 const isMissingTableError = (error: { message?: string } | null | undefined) => {
@@ -61,6 +62,36 @@ export const getAllCompanions = async ({
   const userId = user?.id;
   const supabase = await createSupabaseServerClient();
 
+  // ── Filter defaults in-memory ──
+  let filteredDefaults = DEFAULT_COMPANIONS.map((c) => ({
+    ...c,
+    bookmarked: false,
+  }));
+
+  if (subject && topic) {
+    const s = subject.toLowerCase();
+    const t = topic.toLowerCase();
+    filteredDefaults = filteredDefaults.filter(
+      (c) =>
+        c.subject.toLowerCase().includes(s) &&
+        (c.topic.toLowerCase().includes(t) ||
+          c.name.toLowerCase().includes(t))
+    );
+  } else if (subject) {
+    const s = subject.toLowerCase();
+    filteredDefaults = filteredDefaults.filter((c) =>
+      c.subject.toLowerCase().includes(s)
+    );
+  } else if (topic) {
+    const t = topic.toLowerCase();
+    filteredDefaults = filteredDefaults.filter(
+      (c) =>
+        c.topic.toLowerCase().includes(t) ||
+        c.name.toLowerCase().includes(t)
+    );
+  }
+
+  // ── Query user-created companions from DB ──
   let query = supabase.from("companions").select();
 
   if (subject && topic) {
@@ -78,16 +109,18 @@ export const getAllCompanions = async ({
   const { data: companions, error } = await query;
 
   if (error) {
-    if (isMissingTableError(error)) return [];
+    if (isMissingTableError(error)) return filteredDefaults;
     throw new Error(error.message);
   }
 
+  // ── Merge: defaults first, then DB companions ──
   if (!userId) {
-    return companions.map((companion) => ({
-      ...companion,
-      bookmarked: false,
-    }));
+    return [
+      ...filteredDefaults,
+      ...companions.map((companion) => ({ ...companion, bookmarked: false })),
+    ];
   }
+
   // Get bookmarks for this user
   const { data: bookmarks, error: bookmarkError } = await supabase
     .from("bookmarks")
@@ -96,24 +129,30 @@ export const getAllCompanions = async ({
 
   if (bookmarkError) {
     if (isMissingTableError(bookmarkError)) {
-      return companions.map((companion) => ({
-        ...companion,
-        bookmarked: false,
-      }));
+      return [
+        ...filteredDefaults,
+        ...companions.map((companion) => ({ ...companion, bookmarked: false })),
+      ];
     }
     throw new Error(bookmarkError.message);
   }
 
-  // Create a Set of bookmarked companion_ids for quick lookup
   const bookmarkedIds = new Set(bookmarks.map((b) => b.companion_id));
 
-  return companions.map((companion) => ({
-    ...companion,
-    bookmarked: bookmarkedIds.has(companion.id),
-  }));
+  return [
+    ...filteredDefaults,
+    ...companions.map((companion) => ({
+      ...companion,
+      bookmarked: bookmarkedIds.has(companion.id),
+    })),
+  ];
 };
 
 export const getCompanion = async (id: string) => {
+  // Check defaults first
+  const defaultCompanion = DEFAULT_COMPANIONS.find((c) => c.id === id);
+  if (defaultCompanion) return defaultCompanion;
+
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("companions")
@@ -139,6 +178,8 @@ export const addToSessionHistory = async (companionId: string) => {
 
   if (error) {
     if (isMissingTableError(error)) return [];
+    // FK violation for default companions — silently skip
+    if (DEFAULT_COMPANION_IDS.has(companionId)) return [];
     throw new Error(error.message);
   }
 
@@ -187,7 +228,7 @@ export const getRecentSessions = async (limit = 10) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("session_history")
-    .select(`companions:companion_id (*)`)
+    .select(`companion_id, companions:companion_id (*)`)
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -196,14 +237,20 @@ export const getRecentSessions = async (limit = 10) => {
     throw new Error(error.message);
   }
 
-  return data.map(({ companions }) => companions);
+  return data
+    .map(({ companion_id, companions }) => {
+      if (companions) return companions;
+      // Resolve default companions
+      return DEFAULT_COMPANIONS.find((c) => c.id === companion_id) ?? null;
+    })
+    .filter(Boolean);
 };
 
 export const getUserSessions = async (userId: string, limit = 10) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("session_history")
-    .select(`companions:companion_id (*)`)
+    .select(`companion_id, companions:companion_id (*)`)
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -213,7 +260,12 @@ export const getUserSessions = async (userId: string, limit = 10) => {
     throw new Error(error.message);
   }
 
-  return data.map(({ companions }) => companions);
+  return data
+    .map(({ companion_id, companions }) => {
+      if (companions) return companions;
+      return DEFAULT_COMPANIONS.find((c) => c.id === companion_id) ?? null;
+    })
+    .filter(Boolean);
 };
 
 export const getUserCompanions = async (userId: string) => {
@@ -272,6 +324,8 @@ export const addBookmark = async (companionId: string, path: string) => {
   const user = await getCurrentSupabaseUser();
   const userId = user?.id;
   if (!userId) return;
+  // Can't bookmark default companions (no DB row)
+  if (DEFAULT_COMPANION_IDS.has(companionId)) return;
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("bookmarks").insert({
     companion_id: companionId,
@@ -291,6 +345,7 @@ export const removeBookmark = async (companionId: string, path: string) => {
   const user = await getCurrentSupabaseUser();
   const userId = user?.id;
   if (!userId) return;
+  if (DEFAULT_COMPANION_IDS.has(companionId)) return;
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("bookmarks")
