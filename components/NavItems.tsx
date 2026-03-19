@@ -54,15 +54,6 @@ const NavItems = ({ isLoggedIn, isPro }: { isLoggedIn: boolean; isPro?: boolean 
           {label}
         </Link>
       ))}
-
-      {isLoggedIn && isPro && (
-        <Link
-          href="/subscription"
-          className="bg-gradient-to-b from-violet-500 to-indigo-600 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-[0_2px_10px_rgba(109,40,217,0.35)] hover:scale-[1.03] transition-all"
-        >
-          Pro Plan
-        </Link>
-      )}
     </nav>
   );
 };

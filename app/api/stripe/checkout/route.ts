@@ -1,5 +1,5 @@
 import { stripe } from "@/lib/stripe";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export async function POST() {
@@ -7,6 +7,12 @@ export async function POST() {
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Prevent double-purchasing
+  const isPro = await isUserPro(user.id);
+  if (isPro) {
+    return NextResponse.json({ error: "Already subscribed to Pro" }, { status: 400 });
   }
 
   const priceId = process.env.STRIPE_PRO_PRICE_ID;
@@ -21,7 +27,7 @@ export async function POST() {
     payment_method_types: ["card"],
     customer_email: user.email,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/subscription?success=true`,
+    success_url: `${appUrl}/my-journey?upgraded=true`,
     cancel_url: `${appUrl}/subscription?canceled=true`,
     metadata: { userId: user.id },
     subscription_data: {

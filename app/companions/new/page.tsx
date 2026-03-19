@@ -1,7 +1,7 @@
 import CompanionForm from "@/components/CompanionForm";
 import UpgradeToProButton from "@/components/UpgradeToProButton";
 import { newCompanionPermissions } from "@/lib/actions/companion.action";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -11,7 +11,10 @@ const NewCompanion = async () => {
   const user = await getCurrentSupabaseUser();
   if (!user) redirect("/sign-in");
 
-  const canCreateCompanion = await newCompanionPermissions();
+  const [canCreateCompanion, isPro] = await Promise.all([
+    newCompanionPermissions(),
+    isUserPro(user.id),
+  ]);
 
   return (
     <main className="w-full max-w-3xl items-center justify-center py-8">
@@ -26,7 +29,7 @@ const NewCompanion = async () => {
               Build your personalized AI mentor with custom subject, voice, and teaching style.
             </p>
           </div>
-          <CompanionForm />
+          <CompanionForm isPro={isPro} />
         </article>
       ) : (
         <article className="companion-limit rounded-2xl border border-white/80 bg-white/90 px-6 py-10 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">

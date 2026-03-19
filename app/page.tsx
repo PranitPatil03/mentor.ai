@@ -1,67 +1,16 @@
 import PricingCards from "@/app/subscription/PricingCards";
 import { PLANS } from "@/lib/stripe";
 import { getCurrentSupabaseUser } from "@/lib/supabase";
-import { subjectsColors } from "@/constants";
+import { DEFAULT_COMPANIONS, subjectsColors } from "@/constants";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 
-const DEFAULT_COMPANIONS = [
-  {
-    id: "default-science",
-    name: "Neura the Brainy Explorer",
-    topic: "Neural Networks & the Brain",
-    subject: "science",
-    duration: 45,
-    color: subjectsColors.science,
-    bookmarked: false,
-  },
-  {
-    id: "default-maths",
-    name: "Countsy the Number Wizard",
-    topic: "Derivatives & Integrals",
-    subject: "maths",
-    duration: 30,
-    color: subjectsColors.maths,
-    bookmarked: false,
-  },
-  {
-    id: "default-language",
-    name: "Verba the Vocabulary Builder",
-    topic: "English Literature",
-    subject: "language",
-    duration: 30,
-    color: subjectsColors.language,
-    bookmarked: false,
-  },
-  {
-    id: "default-coding",
-    name: "Codey the Logic Hacker",
-    topic: "Intro to If-Else Statements",
-    subject: "coding",
-    duration: 45,
-    color: subjectsColors.coding,
-    bookmarked: false,
-  },
-  {
-    id: "default-history",
-    name: "Memo the Memory Keeper",
-    topic: "World Wars: Causes & Consequences",
-    subject: "history",
-    duration: 15,
-    color: subjectsColors.history,
-    bookmarked: false,
-  },
-  {
-    id: "default-economics",
-    name: "The Market Maestro",
-    topic: "The Basics of Supply & Demand",
-    subject: "economics",
-    duration: 10,
-    color: subjectsColors.economics,
-    bookmarked: false,
-  },
-];
+/** Landing page shows the first 6 default tutors. */
+const LANDING_COMPANIONS = DEFAULT_COMPANIONS.slice(0, 6).map((c) => ({
+  ...c,
+  color: subjectsColors[c.subject as keyof typeof subjectsColors] ?? "#E0E7FF",
+}));
 
 // Row 1: 40% wide | 30% | 30%
 // Row 2: 30% | 30% | 40% wide
@@ -172,13 +121,13 @@ const Page = async () => {
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl tracking-tight">Meet your AI tutors</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Six ready-made companions across every core subject. Click one and start
+            Ready-made companions across every core subject. Click one and start
             learning right now—no setup needed.
           </p>
         </div>
 
         <div className="companions-grid">
-          {DEFAULT_COMPANIONS.map((c) => (
+          {LANDING_COMPANIONS.map((c) => (
             <article key={c.id} className="companion-card">
               <div className="subject-badge w-fit">{c.subject}</div>
 

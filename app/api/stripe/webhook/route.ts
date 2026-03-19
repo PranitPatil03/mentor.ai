@@ -90,9 +90,7 @@ export async function POST(req: Request) {
             stripe_price_id: sub.items.data[0]?.price?.id ?? null,
             status: sub.status,
             current_period_end: new Date(
-              sub.items.data[0]?.current_period_end
-                ? sub.items.data[0].current_period_end * 1000
-                : Date.now()
+              (sub.current_period_end ?? Math.floor(Date.now() / 1000)) * 1000
             ).toISOString(),
             updated_at: new Date().toISOString(),
           },
@@ -114,9 +112,7 @@ export async function POST(req: Request) {
           status: sub.status,
           stripe_price_id: sub.items.data[0]?.price?.id ?? null,
           current_period_end: new Date(
-            sub.items.data[0]?.current_period_end
-              ? sub.items.data[0].current_period_end * 1000
-              : Date.now()
+            (sub.current_period_end ?? Math.floor(Date.now() / 1000)) * 1000
           ).toISOString(),
           updated_at: new Date().toISOString(),
         })

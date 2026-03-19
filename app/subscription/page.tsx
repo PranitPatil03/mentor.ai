@@ -1,6 +1,7 @@
 import { PLANS } from "@/lib/stripe";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import PricingCards from "./PricingCards";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function SubscriptionPage({
@@ -10,6 +11,12 @@ export default async function SubscriptionPage({
 }) {
   const user = await getCurrentSupabaseUser();
   const params = await searchParams;
+
+  // Pro users don't need the pricing page — send them to profile
+  if (user) {
+    const isPro = await isUserPro(user.id);
+    if (isPro) redirect("/my-journey");
+  }
 
   return (
     <main className="py-16 flex flex-col items-center">
