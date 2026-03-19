@@ -137,42 +137,40 @@ const CompanionForm = ({ isPro }: { isPro?: boolean }) => {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex gap-2 items-end">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="input capitalize flex-1">
-                          <SelectValue placeholder="Select the subject" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {subjects.map((subject) => (
-                            <SelectItem
-                              value={subject}
-                              key={subject}
-                              className="capitalize"
-                            >
-                              {subject}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {isPro && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setUseCustomSubject(true);
-                            field.onChange("");
-                          }}
-                          className="text-xs text-indigo-600 hover:text-indigo-700 whitespace-nowrap cursor-pointer"
-                        >
-                          + Custom
-                        </button>
-                      )}
-                    </div>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="input capitalize">
+                        <SelectValue placeholder="Select the subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subjects.map((subject) => (
+                          <SelectItem
+                            value={subject}
+                            key={subject}
+                            className="capitalize"
+                          >
+                            {subject}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   )}
                 </FormControl>
+                {isPro && !useCustomSubject && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUseCustomSubject(true);
+                      field.onChange("");
+                    }}
+                    className="text-xs text-indigo-600 hover:text-indigo-700 cursor-pointer w-fit"
+                  >
+                    + Custom subject
+                  </button>
+                )}
                 {!isPro && (
                   <p className="text-xs text-gray-400">
                     Custom subjects available on Pro
@@ -229,7 +227,7 @@ const CompanionForm = ({ isPro }: { isPro?: boolean }) => {
           )}
         />
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+        <div className="flex gap-4 flex-wrap sm:flex-nowrap items-end">
           <FormField
             control={form.control}
             name="style"
@@ -275,14 +273,12 @@ const CompanionForm = ({ isPro }: { isPro?: boolean }) => {
             )}
           />
 
-          <div className="flex items-end">
-            <Button
-              type="submit"
-              className="w-full cursor-pointer bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] transition-all duration-200"
-            >
-              {form.formState.isSubmitting ? "Creating..." : "Create AI Mentor"}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            className="cursor-pointer bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] transition-all duration-200 px-6 shrink-0"
+          >
+            {form.formState.isSubmitting ? "Creating..." : "Create AI Mentor"}
+          </Button>
         </div>
         {form.formState.errors.root?.message ? (
           <p className="text-sm text-red-600 text-center">
