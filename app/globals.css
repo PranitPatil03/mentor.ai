@@ -254,10 +254,10 @@ body {
     @apply text-gray-600 max-w-2xl text-lg leading-relaxed;
   }
   .hero-cta-primary {
-    @apply bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] inline-flex h-12 px-8 items-center justify-center text-base;
+    @apply bg-gradient-to-b from-violet-500 to-indigo-600 border border-violet-700 text-white font-medium rounded-xl transition-all duration-200 shadow-[0_4px_14px_rgba(109,40,217,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(109,40,217,0.6)] inline-flex h-12 px-8 items-center justify-center text-base cursor-pointer;
   }
   .hero-cta-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-200 shadow-sm hover:shadow rounded-xl transition-all duration-200 inline-flex h-12 px-8 items-center justify-center text-base;
+    @apply bg-white hover:bg-gray-50 text-gray-900 font-medium border border-gray-200 shadow-sm hover:shadow rounded-xl transition-all duration-200 inline-flex h-12 px-8 items-center justify-center text-base cursor-pointer;
   }
   .hero-cta-secondary-dark {
     @apply border border-white/20 hover:border-white/50 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors;

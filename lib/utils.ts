@@ -7,13 +7,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getSubjectColor = (subject: string) => {
-  return subjectsColors[subject as keyof typeof subjectsColors];
+  return subjectsColors[subject as keyof typeof subjectsColors] ?? "#E0E7FF";
 };
 
 export const configureAssistant = (voice: string, style: string) => {
   const voiceId =
     voices[voice as keyof typeof voices][
-      style as keyof (typeof voices)[keyof typeof voices]
+    style as keyof (typeof voices)[keyof typeof voices]
     ] || "sarah";
 
   const vapiAssistant: CreateAssistantDTO = {

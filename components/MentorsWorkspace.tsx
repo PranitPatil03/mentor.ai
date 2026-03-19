@@ -19,12 +19,14 @@ interface MentorsWorkspaceProps {
   mentors: MentorSummary[];
   canCreateMentor: boolean;
   userName: string;
+  isPro?: boolean;
 }
 
 const MentorsWorkspace = ({
   mentors,
   canCreateMentor,
   userName,
+  isPro,
 }: MentorsWorkspaceProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -151,7 +153,7 @@ const MentorsWorkspace = ({
               </button>
             </div>
 
-            <CompanionForm />
+            <CompanionForm isPro={isPro} />
           </div>
         </div>
       ) : null}

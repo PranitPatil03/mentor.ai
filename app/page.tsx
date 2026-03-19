@@ -10,7 +10,7 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-science",
     name: "Neura the Brainy Explorer",
-    topic: "Neural Networks & the Brain",
+    topic: "Dive deep into the wonders of the nervous system — learn how neurons fire, how signals travel through the brain, and the science behind how we think, feel, and react.",
     subject: "science",
     duration: 45,
     color: subjectsColors.science,
@@ -19,7 +19,7 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-maths",
     name: "Countsy the Number Wizard",
-    topic: "Derivatives & Integrals",
+    topic: "Master the fundamentals of calculus — from understanding limits and derivatives to solving integrals. Perfect for exam prep and building a rock-solid math foundation.",
     subject: "maths",
     duration: 30,
     color: subjectsColors.maths,
@@ -28,7 +28,7 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-language",
     name: "Verba the Vocabulary Builder",
-    topic: "English Literature",
+    topic: "Explore classic and modern English literature — analyse themes, characters, and writing styles from Shakespeare to contemporary authors, boosting both comprehension and vocabulary.",
     subject: "language",
     duration: 30,
     color: subjectsColors.language,
@@ -37,7 +37,7 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-coding",
     name: "Codey the Logic Hacker",
-    topic: "Intro to If-Else Statements",
+    topic: "Learn the building blocks of programming — understand if-else logic, loops, and control flow with hands-on examples in Python and JavaScript that make coding click.",
     subject: "coding",
     duration: 45,
     color: subjectsColors.coding,
@@ -46,7 +46,7 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-history",
     name: "Memo the Memory Keeper",
-    topic: "World Wars: Causes & Consequences",
+    topic: "Uncover the causes, key events, and lasting consequences of World War I and II — from alliances and treaties to the social changes that reshaped the modern world.",
     subject: "history",
     duration: 15,
     color: subjectsColors.history,
@@ -55,9 +55,45 @@ const DEFAULT_COMPANIONS = [
   {
     id: "default-economics",
     name: "The Market Maestro",
-    topic: "The Basics of Supply & Demand",
+    topic: "Understand how markets work — explore supply and demand curves, equilibrium pricing, and real-world examples of how economies respond to change.",
     subject: "economics",
     duration: 10,
+    color: subjectsColors.economics,
+    bookmarked: false,
+  },
+  {
+    id: "default-physics",
+    name: "Newton the Force Guide",
+    topic: "Break down Newton's three laws of motion with real-world scenarios — from car crashes to roller coasters. Build intuition for forces, momentum, and the physics of everyday life.",
+    subject: "science",
+    duration: 30,
+    color: subjectsColors.science,
+    bookmarked: false,
+  },
+  {
+    id: "default-algebra",
+    name: "Algy the Equation Solver",
+    topic: "Conquer algebra from linear equations to quadratics — learn step-by-step problem solving, factoring techniques, and graphing methods that make algebra intuitive and fun.",
+    subject: "maths",
+    duration: 25,
+    color: subjectsColors.maths,
+    bookmarked: false,
+  },
+  {
+    id: "default-webdev",
+    name: "Pixel the Web Builder",
+    topic: "Build your first website from scratch — learn HTML structure, CSS styling, and responsive design principles. Go from blank page to a polished, mobile-friendly site.",
+    subject: "coding",
+    duration: 40,
+    color: subjectsColors.coding,
+    bookmarked: false,
+  },
+  {
+    id: "default-finance",
+    name: "Penny the Finance Coach",
+    topic: "Learn personal finance essentials — budgeting, saving strategies, compound interest, and smart investing basics that set you up for long-term financial success.",
+    subject: "economics",
+    duration: 20,
     color: subjectsColors.economics,
     bookmarked: false,
   },
@@ -172,7 +208,7 @@ const Page = async () => {
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl tracking-tight">Meet your AI tutors</h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
-            Six ready-made companions across every core subject. Click one and start
+            Ten ready-made companions across every core subject. Click one and start
             learning right now—no setup needed.
           </p>
         </div>

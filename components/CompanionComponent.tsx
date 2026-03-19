@@ -1,6 +1,6 @@
 "use client";
 
-import { addToSessionHistory } from "@/lib/actions/companion.action";
+import { addToSessionHistory, canStartSession } from "@/lib/actions/companion.action";
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import Image from "next/image";
@@ -161,7 +161,28 @@ const CompanionComponent = ({
     }
   };
 
+  const [sessionError, setSessionError] = useState<string | null>(null);
+
   const handleCall = async () => {
+    setSessionError(null);
+
+    // Enforce session limit for free users
+    try {
+      const { allowed, remaining } = await canStartSession();
+      if (!allowed) {
+        setSessionError(
+          "You've used all 10 free sessions this month. Upgrade to Pro for unlimited sessions."
+        );
+        return;
+      }
+      if (remaining !== null && remaining <= 3) {
+        // Show a soft warning but still allow
+        setSessionError(`${remaining} free session${remaining === 1 ? "" : "s"} remaining this month.`);
+      }
+    } catch {
+      // If check fails, allow the session to proceed
+    }
+
     setCallStatus(CallStatus.CONNECTING);
     setMessages([]);
     setPartial(null);
@@ -339,6 +360,25 @@ const CompanionComponent = ({
             <MicButton />
             <SessionButton />
           </div>
+
+          {sessionError && callStatus === CallStatus.INACTIVE && (
+            <div className="max-w-sm text-center">
+              <p className={cn(
+                "text-sm",
+                sessionError.includes("Upgrade") ? "text-red-600" : "text-amber-600"
+              )}>
+                {sessionError}
+              </p>
+              {sessionError.includes("Upgrade") && (
+                <a
+                  href="/subscription"
+                  className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                >
+                  Upgrade to Pro →
+                </a>
+              )}
+            </div>
+          )}
 
           {callStatus === CallStatus.CONNECTING && (
             <p className="animate-pulse text-sm text-gray-400">

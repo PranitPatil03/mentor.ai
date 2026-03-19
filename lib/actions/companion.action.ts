@@ -2,6 +2,7 @@
 import {
   createSupabaseServerClient,
   getCurrentSupabaseUser,
+  isUserPro,
 } from "../supabase";
 import { revalidatePath } from "next/cache";
 
@@ -144,6 +145,44 @@ export const addToSessionHistory = async (companionId: string) => {
   return data;
 };
 
+/** Check if user can start a new session (Pro = unlimited, Free = 10/month). */
+export const canStartSession = async (): Promise<{
+  allowed: boolean;
+  remaining: number | null;
+}> => {
+  const userId = await getRequiredUserId();
+
+  const pro = await isUserPro(userId);
+  if (pro) return { allowed: true, remaining: null };
+
+  const supabase = await createSupabaseServerClient();
+  const monthLimit = 10;
+
+  // Count sessions created this calendar month
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  const { count, error } = await supabase
+    .from("session_history")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("created_at", startOfMonth);
+
+  if (error) {
+    if (isMissingTableError(error)) return { allowed: true, remaining: monthLimit };
+    throw new Error(error.message);
+  }
+
+  const used = count ?? 0;
+  return { allowed: used < monthLimit, remaining: monthLimit - used };
+};
+
+/** Quick helper for client components — returns { isPro: boolean }. */
+export const checkProStatus = async (): Promise<boolean> => {
+  const userId = await getRequiredUserId();
+  return isUserPro(userId);
+};
+
 export const getRecentSessions = async (limit = 10) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -194,8 +233,12 @@ export const getUserCompanions = async (userId: string) => {
 
 export const newCompanionPermissions = async () => {
   const userId = await getRequiredUserId();
-  const supabase = await createSupabaseServerClient();
 
+  // Pro users can create unlimited companions
+  const pro = await isUserPro(userId);
+  if (pro) return true;
+
+  const supabase = await createSupabaseServerClient();
   const limit = Number(process.env.MAX_FREE_COMPANIONS ?? 3);
 
   const { data, error } = await supabase
@@ -208,13 +251,7 @@ export const newCompanionPermissions = async () => {
     throw new Error(error.message);
   }
 
-  const companionCount = data?.length;
-
-  if (companionCount >= limit) {
-    return false;
-  } else {
-    return true;
-  }
+  return (data?.length ?? 0) < limit;
 };
 
 export const getBookmarkedCompanions = async (userId: string) => {

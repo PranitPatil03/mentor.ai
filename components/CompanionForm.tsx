@@ -24,6 +24,7 @@ import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
 import { createCompanion } from "@/lib/actions/companion.action";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -46,8 +47,9 @@ const formSchema = z.object({
   }),
 });
 
-const CompanionForm = () => {
+const CompanionForm = ({ isPro }: { isPro?: boolean }) => {
   const router = useRouter();
+  const [useCustomSubject, setUseCustomSubject] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -116,27 +118,66 @@ const CompanionForm = () => {
               <FormItem>
                 <FormLabel>Subject</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger className="input capitalize">
-                      <SelectValue placeholder="Select the subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subjects.map((subject) => (
-                        <SelectItem
-                          value={subject}
-                          key={subject}
-                          className="capitalize"
+                  {isPro && useCustomSubject ? (
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="e.g. Psychology"
+                        {...field}
+                        className="input flex-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUseCustomSubject(false);
+                          field.onChange("");
+                        }}
+                        className="text-xs text-indigo-600 hover:text-indigo-700 whitespace-nowrap cursor-pointer"
+                      >
+                        Pick from list
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 items-end">
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="input capitalize flex-1">
+                          <SelectValue placeholder="Select the subject" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {subjects.map((subject) => (
+                            <SelectItem
+                              value={subject}
+                              key={subject}
+                              className="capitalize"
+                            >
+                              {subject}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {isPro && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUseCustomSubject(true);
+                            field.onChange("");
+                          }}
+                          className="text-xs text-indigo-600 hover:text-indigo-700 whitespace-nowrap cursor-pointer"
                         >
-                          {subject}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                          + Custom
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </FormControl>
+                {!isPro && (
+                  <p className="text-xs text-gray-400">
+                    Custom subjects available on Pro
+                  </p>
+                )}
                 <FormMessage />
               </FormItem>
             )}

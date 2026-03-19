@@ -8,7 +8,7 @@ import {
   getUserCompanions,
   newCompanionPermissions,
 } from "@/lib/actions/companion.action";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
+import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import { getSubjectColor } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
@@ -61,9 +61,10 @@ export default async function MentorsPage({
   }
 
   // Default: "mine" tab
-  const [mentors, canCreateMentor] = await Promise.all([
+  const [mentors, canCreateMentor, isPro] = await Promise.all([
     getUserCompanions(user.id),
     newCompanionPermissions(),
+    isUserPro(user.id),
   ]);
 
   return (
@@ -75,6 +76,7 @@ export default async function MentorsPage({
         mentors={mentors}
         canCreateMentor={canCreateMentor}
         userName={userName}
+        isPro={isPro}
       />
     </>
   );
