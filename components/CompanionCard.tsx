@@ -2,8 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import React from "react";
-import BookmarkButton from "./BookmarkButton";
-import { getCurrentSupabaseUser } from "@/lib/supabase";
 
 interface CompanionTypeProps {
   id: string;
@@ -12,25 +10,20 @@ interface CompanionTypeProps {
   subject: string;
   duration: number;
   color: string;
-  bookmarked: boolean;
+  bookmarked?: boolean;
 }
 
-const CompanionCard = async ({
+const CompanionCard = ({
   id,
   name,
   topic,
   subject,
   duration,
   color,
-  bookmarked,
 }: CompanionTypeProps) => {
-  const user = await getCurrentSupabaseUser();
   return (
     <article className="companion-card" style={{ backgroundColor: color }}>
-      <div className="flex justify-between items-center">
-        <div className="subject-badge">{subject}</div>
-        <BookmarkButton id={id} bookmarked={bookmarked} userSignedIn={!!user} />
-      </div>
+      <div className="subject-badge w-fit">{subject}</div>
 
       <h2 className="text-2xl font-bold">{name}</h2>
       <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">{topic}</p>
@@ -45,7 +38,7 @@ const CompanionCard = async ({
       </div>
 
       <Link href={`/companions/${id}`} className="w-full">
-        <button className="btn-primary w-full justify-center hover:bg-neutral-800 hover:scale-104 hover:shadow-md transition duration-200">
+        <button className="btn-primary w-full justify-center cursor-pointer">
           Start Session
         </button>
       </Link>

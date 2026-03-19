@@ -1,8 +1,4 @@
-import CompanionCard from "@/components/CompanionCard";
-import MentorTabs from "@/components/MentorTabs";
-import MentorsWorkspace from "@/components/MentorsWorkspace";
-import SearchInput from "@/components/SearchInput";
-import SubjectFilter from "@/components/SubjectFilter";
+import MentorsDashboard from "@/components/MentorsDashboard";
 import {
   getAllCompanions,
   getUserCompanions,
@@ -12,19 +8,12 @@ import { getCurrentSupabaseUser, isUserPro } from "@/lib/supabase";
 import { getSubjectColor } from "@/lib/utils";
 import { redirect } from "next/navigation";
 
-export default async function MentorsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string; subject?: string; topic?: string }>;
-}) {
+export default async function MentorsPage() {
   const user = await getCurrentSupabaseUser();
 
   if (!user) {
     redirect("/sign-in");
   }
-
-  const params = await searchParams;
-  const activeTab = params.tab ?? "mine";
 
   const userName =
     user.user_metadata?.full_name ||
@@ -32,52 +21,26 @@ export default async function MentorsPage({
     user.email?.split("@")[0] ||
     "Learner";
 
-  if (activeTab === "public") {
-    const subject = params.subject ?? "";
-    const topic = params.topic ?? "";
-    const companions = await getAllCompanions({ subject, topic });
-
-    return (
-      <>
-        <div className="flex items-center justify-between gap-4 flex-wrap py-6">
-          <MentorTabs />
-          <div className="flex gap-4">
-            <SearchInput />
-            <SubjectFilter />
-          </div>
-        </div>
-
-        <section className="companions-grid">
-          {companions.map((companion) => (
-            <CompanionCard
-              key={companion.id}
-              {...companion}
-              color={getSubjectColor(companion.subject)}
-            />
-          ))}
-        </section>
-      </>
-    );
-  }
-
-  // Default: "mine" tab
-  const [mentors, canCreateMentor, isPro] = await Promise.all([
+  // Fetch everything in parallel — one server call, instant tab switching
+  const [myMentors, canCreateMentor, isPro, allCompanions] = await Promise.all([
     getUserCompanions(user.id),
     newCompanionPermissions(),
     isUserPro(user.id),
+    getAllCompanions({ subject: "", topic: "" }),
   ]);
 
+  const allWithColor = allCompanions.map((c) => ({
+    ...c,
+    color: getSubjectColor(c.subject),
+  }));
+
   return (
-    <>
-      <div className="py-6">
-        <MentorTabs />
-      </div>
-      <MentorsWorkspace
-        mentors={mentors}
-        canCreateMentor={canCreateMentor}
-        userName={userName}
-        isPro={isPro}
-      />
-    </>
+    <MentorsDashboard
+      myMentors={myMentors}
+      allCompanions={allWithColor}
+      canCreateMentor={canCreateMentor}
+      userName={userName}
+      isPro={isPro}
+    />
   );
 }

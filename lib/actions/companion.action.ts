@@ -32,6 +32,38 @@ const getRequiredUserId = async () => {
   return user.id;
 };
 
+/**
+ * Fallback helper: given a list of { companion_id } rows, resolve each to
+ * either a DB companion or a default companion.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const resolveCompanions = async (supabase: any, rows: { companion_id: string }[]) => {
+  const dbIds = rows
+    .map((r) => r.companion_id)
+    .filter((id) => !DEFAULT_COMPANION_IDS.has(id));
+
+  let dbMap: Record<string, unknown> = {};
+  if (dbIds.length > 0) {
+    const { data: dbCompanions } = await supabase
+      .from("companions")
+      .select()
+      .in("id", dbIds);
+    if (dbCompanions) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      dbMap = Object.fromEntries(dbCompanions.map((c: any) => [c.id, c]));
+    }
+  }
+
+  return rows
+    .map((r) => {
+      if (DEFAULT_COMPANION_IDS.has(r.companion_id)) {
+        return DEFAULT_COMPANIONS.find((c) => c.id === r.companion_id) ?? null;
+      }
+      return dbMap[r.companion_id] ?? null;
+    })
+    .filter(Boolean);
+};
+
 export const createCompanion = async (formData: CreateCompanion) => {
   const author = await getRequiredUserId();
   const supabase = await createSupabaseServerClient();
@@ -234,13 +266,22 @@ export const getRecentSessions = async (limit = 10) => {
 
   if (error) {
     if (isMissingTableError(error)) return [];
-    throw new Error(error.message);
+
+    // Fallback: plain select without join
+    const { data: plain, error: plainError } = await supabase
+      .from("session_history")
+      .select("companion_id")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (plainError) return [];
+
+    return await resolveCompanions(supabase, plain);
   }
 
   return data
     .map(({ companion_id, companions }) => {
       if (companions) return companions;
-      // Resolve default companions
       return DEFAULT_COMPANIONS.find((c) => c.id === companion_id) ?? null;
     })
     .filter(Boolean);
@@ -248,6 +289,8 @@ export const getRecentSessions = async (limit = 10) => {
 
 export const getUserSessions = async (userId: string, limit = 10) => {
   const supabase = await createSupabaseServerClient();
+
+  // Try the joined query first
   const { data, error } = await supabase
     .from("session_history")
     .select(`companion_id, companions:companion_id (*)`)
@@ -257,7 +300,22 @@ export const getUserSessions = async (userId: string, limit = 10) => {
 
   if (error) {
     if (isMissingTableError(error)) return [];
-    throw new Error(error.message);
+
+    // If the join fails (e.g. FK referencing non-existent default rows),
+    // fall back to a plain select and resolve companions manually.
+    const { data: plain, error: plainError } = await supabase
+      .from("session_history")
+      .select("companion_id")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (plainError) {
+      if (isMissingTableError(plainError)) return [];
+      return [];
+    }
+
+    return await resolveCompanions(supabase, plain);
   }
 
   return data
