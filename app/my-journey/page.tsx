@@ -25,9 +25,11 @@ const Profile = async ({
   if (!user) redirect("/sign-in");
 
   const params = await searchParams;
-  const companions = await getUserCompanions(user.id);
-  const sessionHistory = await getUserSessions(user.id);
-  const isPro = await isUserPro(user.id);
+  const [companions, sessionHistory, isPro] = await Promise.all([
+    getUserCompanions(user.id),
+    getUserSessions(user.id),
+    isUserPro(user.id),
+  ]);
   const displayName =
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
