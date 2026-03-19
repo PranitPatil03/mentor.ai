@@ -1,7 +1,7 @@
 "use client";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@jsmastery/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -18,10 +18,17 @@ const SubjectFilter = () => {
   const query = searchParams.get("subject") || "";
 
   const [subject, setSubject] = useState(query);
+  const isInitialRef = useRef(true);
 
   useEffect(() => {
+    // Skip the initial render to avoid a redundant navigation
+    if (isInitialRef.current) {
+      isInitialRef.current = false;
+      return;
+    }
+
     let newUrl = "";
-    if (subject === "all") {
+    if (!subject || subject === "all") {
       newUrl = removeKeysFromUrlQuery({
         params: searchParams.toString(),
         keysToRemove: ["subject"],

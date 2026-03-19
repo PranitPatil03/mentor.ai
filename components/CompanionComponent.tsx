@@ -340,7 +340,7 @@ const CompanionComponent = ({
     return (
       <section className="flex h-[calc(100vh-120px)] flex-col items-center justify-center font-sans">
         {/* Tutor heading */}
-        <div className="mb-8 text-center">
+        <div className="mb-8 text-center max-w-lg mx-auto">
           <h1 className="text-2xl font-bold text-gray-900">{name}</h1>
           <p className="mt-1 text-sm capitalize text-gray-500">{subject} · {topic}</p>
         </div>
